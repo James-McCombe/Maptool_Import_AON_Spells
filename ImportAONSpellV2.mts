@@ -25,8 +25,8 @@
   }]
 }]
 
-[r: "Target: " + targetSpell + "<br>"]
-[r: "Index Key: " + indexKeyFound + "<br />"]
+[h: "Target: " + targetSpell + "<br>"]
+[h: "Index Key: " + indexKeyFound + "<br />"]
 
 [h: assert(indexKeyFound != "", "Spell not found in aon73-index.json: " + targetSpell, 0)]
 [h: urlData = 'https://elasticsearch.aonprd.com/json-data/' + indexKeyFound + '.json']
@@ -46,7 +46,6 @@
 }]
 
 [h: assert(spellData != "", "Spell object not found in bucket file: " + targetSpell, 0)]
-
 
 [h: spell_actions = json.get(spellData, "actions")]
 [h: spell_bloodline_markdown = json.get(spellData, "bloodline_markdown")]
@@ -89,47 +88,51 @@
 [h: spell_url = json.get(spellData, "url")]
 [h: spell_weakness = json.get(spellData, "weakness")]
 
-[h: spell_summary = substring(spell_markdown, indexOf(spell_markdown, '---', 0) +4)]
-
-[r: 'spell_actions: ' + spell_actions + '<br />']
-[r: 'spell_bloodline_markdown: ' + spell_bloodline_markdown + '<br />']
-[r: 'spell_component: ' + spell_component + '<br />']
-[r: 'spell_domain_markdown: ' + spell_domain_markdown + '<br />']
-[r: 'spell_element: ' + spell_element + '<br />']
-[r: 'spell_heighten: ' + spell_heighten + '<br />']
-[r: 'spell_heighten_group: ' + spell_heighten_group + '<br />']
-[r: 'spell_heighten_level: ' + spell_heighten_level + '<br />']
-[r: 'spell_id: ' + spell_id + '<br />']
-[r: 'spell_legacy_id: ' + spell_legacy_id + '<br />']
-[r: 'spell_level: ' + spell_level + '<br />']
-[r: 'spell_markdown: ' + spell_markdown + '<br />']
-[r: 'spell_mystery_markdown: ' + spell_mystery_markdown + '<br />']
 [r: 'spell_name: ' + spell_name + '<br />']
-[r: 'spell_pfs: ' + spell_pfs + '<br />']
-[r: 'spell_primary_source_category: ' + spell_primary_source_category + '<br />']
-[r: 'spell_range: ' + spell_range + '<br />']
-[r: 'spell_range_raw: ' + spell_range_raw + '<br />']
-[r: 'spell_rarity: ' + spell_rarity + '<br />']
-[r: 'spell_rarity_id: ' + spell_rarity_id + '<br />']
-[r: 'spell_release_date: ' + spell_release_date + '<br />']
-[r: 'spell_remaster_id: ' + spell_remaster_id + '<br />']
-[r: 'spell_resistance: ' + spell_resistance + '<br />']
-[r: 'spell_saving_throw_markdown: ' + spell_saving_throw_markdown + '<br />']
-[r: 'spell_school: ' + spell_school + '<br />']
-[r: 'spell_search_markdown: ' + spell_search_markdown + '<br />']
-[r: 'spell_source: ' + spell_source + '<br />']
-[r: 'spell_source_category: ' + spell_source_category + '<br />']
-[r: 'spell_source_markdown: ' + spell_source_markdown + '<br />']
-[r: 'spell_speed: ' + spell_speed + '<br />']
-[r: 'spell_spell_type: ' + spell_spell_type + '<br />']
-[r: 'spell_summary_markdown: ' + spell_summary_markdown + '<br />']
-[r: 'spell_target_markdown: ' + spell_target_markdown + '<br />']
 [r: 'spell_tradition: ' + spell_tradition + '<br />']
-[r: 'spell_tradition_markdown: ' + spell_tradition_markdown + '<br />']
-[r: 'spell_trait: ' + spell_trait + '<br />']
-[r: 'spell_trait_markdown: ' + spell_trait_markdown + '<br />']
-[r: 'spell_type: ' + spell_type + '<br />']
-[r: 'spell_url: ' + spell_url + '<br />']
-[r: 'spell_weakness: ' + spell_weakness + '<br />']
+[r: 'spell_level: ' + spell_level + '<br />']
+[r: 'spell_id: ' + spell_id + '<br />']
 [r: '<br />']
-[r: 'spell summary: ' + spell_summary + '<br />']
+
+[h: spell_heighten_markdown = ""]
+[h: spell_summary = substring(spell_markdown, indexOf(spell_markdown, '---', 0) +4)]
+[h: close_summary_found = indexOf(spell_summary, '---')]
+[h, if(close_summary_found > -1), code: {
+	[h: spell_heighten_markdown = substring(spell_summary, close_summary_found +4)]
+}]
+
+[h, if(close_summary_found != -1), code: {
+	[h: spell_summary = substring(spell_summary, 0, close_summary_found)]
+}]
+[h: spell_summary = replace(spell_summary, '\\[', "&#91;")]
+[h: spell_summary = replace(spell_summary, '\\]', "&#93;")]
+
+[h: 'spell_summary = replace(spell_summary, "\\[([^\\]]+)\\]\\([^\\)]+\\)", "")']  
+[h: 'spell_summary = replace(spell_summary, "\\*\\*", "")']
+[h: 'spell_summary = replace(spell_summary, "\\s+", " ")']
+[h: 'spell_summary = trim(spell_summary)']
+
+[h: src = spell_summary]
+[h: out = ""]
+[h: pos = 0]
+
+[h: fid = strfind(src, "(?i)\\b(\\d+d\\d+(?:\\+\\d+)?)\\b")]
+[h: mCount = getFindCount(fid) +1]
+
+[h, if(mCount > 0), code: {
+  [h, for(i, 1, mCount), code: {
+    [h: dice = getGroup(fid, i, 1)]
+    [h: start = getGroupStart(fid, i, 0)]
+    [h: end   = getGroupEnd(fid, i, 0)]
+
+    [h: out = out + substring(src, pos, start)]
+    [h: out = out + "[e: " + dice + "]"]
+    [h: pos = end]
+  }]
+}]
+
+[h: out = out + substring(src, pos)]
+[h: spell_summary = out]
+[r: execMacro(spell_summary)]
+[r: '<br />spell_heighten_markdown: ' + spell_heighten_markdown + '<br />']
+
