@@ -7,6 +7,8 @@
 
 [h: urlIndex = 'https://elasticsearch.aonprd.com/json-data/aon73-index.json']
 [h: htmlIndex = REST.get(urlIndex, '{"Accept": ["text/html"], "Accept-Encoding": [""]}', 0)]
+[h: assert(htmlIndex != "", "Failed to load AON index file.", 0)]
+[h: assert(json.type(htmlIndex) == "OBJECT", "AON index response was not a JSON object.", 0)]
 
 [h: targetSpell = "spell-" + spellID]
 [h: indexKeyFound = ""]
@@ -15,33 +17,36 @@
 [h: keyCount = listcount(keys)]
 
 [h, for(i, 0, keyCount), code: {
-	[h: key = listGet(keys, i)]
-	[h: arr = json.get(htmlIndex, key)]
-	[h: found = json.contains(arr, targetSpell)]
-	[h, if(found == 1), code: {
-		[h: indexKeyFound = key]
-	}]
+  [h, if(indexKeyFound == ""), code: {
+    [h: key = listGet(keys, i)]
+    [h: arr = json.get(htmlIndex, key)]
+    [h: found = json.contains(arr, targetSpell)]
+    [h, if(found == 1): indexKeyFound = key]
+  }]
 }]
 
 [r: "Target: " + targetSpell + "<br>"]
 [r: "Index Key: " + indexKeyFound + "<br />"]
 
+[h: assert(indexKeyFound != "", "Spell not found in aon73-index.json: " + targetSpell, 0)]
 [h: urlData = 'https://elasticsearch.aonprd.com/json-data/' + indexKeyFound + '.json']
 [h: htmlData = REST.get(urlData, '{"Accept": ["text/html"], "Accept-Encoding": [""]}', 0)]
+[h: assert(htmlData != "", "Failed to load AON data file: " + indexKeyFound + ".json", 0)]
+[h: assert(json.type(htmlData) == "ARRAY", "AON bucket response was not a JSON array.", 0)]
 
 [h: spellData = ""]
 
-[h: keyCount = json.length(htmlData)]
-[h, for(i, 0, keyCount), code: {
-	[h: spellID = ""]
-	[h: obj = json.get(htmlData, i)]
-	[h: objID = json.get(obj, "id")]
-	[h, if(objID == targetSpell), code: {
-		[h: spellData = obj]
-	}]
+[h: dataCount = json.length(htmlData)]
+[h, for(i, 0, dataCount), code: {
+  [h, if(spellData == ""), code: {
+    [h: obj = json.get(htmlData, i)]
+    [h: objID = json.get(obj, "id")]
+    [h, if(objID == targetSpell): spellData = obj]
+  }]
 }]
 
-[h: spellData]
+[h: assert(spellData != "", "Spell object not found in bucket file: " + targetSpell, 0)]
+
 
 [h: spell_actions = json.get(spellData, "actions")]
 [h: spell_bloodline_markdown = json.get(spellData, "bloodline_markdown")]
@@ -84,6 +89,8 @@
 [h: spell_url = json.get(spellData, "url")]
 [h: spell_weakness = json.get(spellData, "weakness")]
 
+[h: spell_summary = substring(spell_markdown, indexOf(spell_markdown, '---', 0) +4)]
+
 [r: 'spell_actions: ' + spell_actions + '<br />']
 [r: 'spell_bloodline_markdown: ' + spell_bloodline_markdown + '<br />']
 [r: 'spell_component: ' + spell_component + '<br />']
@@ -124,3 +131,5 @@
 [r: 'spell_type: ' + spell_type + '<br />']
 [r: 'spell_url: ' + spell_url + '<br />']
 [r: 'spell_weakness: ' + spell_weakness + '<br />']
+[r: '<br />']
+[r: 'spell summary: ' + spell_summary + '<br />']
