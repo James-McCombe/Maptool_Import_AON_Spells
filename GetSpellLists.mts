@@ -19,6 +19,25 @@
   }]
 }]
 
+[h: spellKeyObjs = json.append("", "")]
+
 [h, if(json.length(bucketKeys) > 1): bucketKeys = json.remove(bucketKeys, 0)]
 
-[dialog5('Test'): {[r: string(bucketKeys)]}]
+[h, for(j, 0, json.length(bucketKeys)), code: {
+  [h: indexKeyFound = json.get(bucketKeys, j)]
+  [h: urlData = 'https://elasticsearch.aonprd.com/json-data/' + indexKeyFound + '.json']
+  [h: htmlData = REST.get(urlData, '{"Accept": ["text/html"], "Accept-Encoding": [""]}', 0)]
+  [h: spellKeyCount = json.length(htmlData)]
+  [h, for(k, 0, spellKeyCount), code: {
+ 	[h: spellKey = json.get(htmlData, k)]
+	[h: spell_name = json.get(spellKey, "name")]
+	[h: spell_tradition = json.get(spellKey, "tradition")]
+	[h: spell_level = json.get(spellKey, "level")]
+	[h: spell_id = json.get(spellKey, "id")]
+	[h: spellKeyObj = json.set("", "spell_name", spell_name, "spell_tradition", spell_tradition, "spell_level", spell_level, "spell_id", spell_id)]
+	[h: spellKeyObjs = json.append(spellKeyObjs, spellKeyObj)]
+  }]
+}]
+
+
+[dialog5('Test'): {[r: string(spellKeyObjs)]}]
