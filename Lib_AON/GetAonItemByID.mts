@@ -2,7 +2,7 @@
 [h: assert(targetItem != "", "No item id passed to macro.", 0)]
 
 [h: urlIndex = 'https://elasticsearch.aonprd.com/json-data/aon73-index.json']
-[h: indexJson = REST.get(urlIndex, '{"Accept": ["text/html"], "Accept-Encoding": [""]}', 0)]
+[h: indexJson = REST.get(urlIndex, '{"Accept": ["application/json"], "Accept-Encoding": [""]}', 0)]
 
 [h: assert(indexJson != "", "Failed to load AON index file.", 0)]
 [h: assert(json.type(indexJson) == "OBJECT", "AON index response was not a JSON object.", 0)]
@@ -24,7 +24,7 @@
 [h: assert(indexKeyFound != "", "Item not found in aon73-index.json: " + targetItem, 0)]
 
 [h: urlData = 'https://elasticsearch.aonprd.com/json-data/' + indexKeyFound + '.json']
-[h: htmlData = REST.get(urlData, '{"Accept": ["text/html"], "Accept-Encoding": [""]}', 0)]
+[h: htmlData = REST.get(urlData, '{"Accept": ["application/json"], "Accept-Encoding": [""]}', 0)]
 
 [h: assert(htmlData != "", "Failed to load AON data file: " + indexKeyFound + ".json", 0)]
 [h: assert(json.type(htmlData) == "ARRAY", "AON bucket response was not a JSON array.", 0)]
