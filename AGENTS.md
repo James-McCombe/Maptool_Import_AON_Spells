@@ -1,0 +1,192 @@
+# Codex Rules for This Repo
+
+This repo uses MapTool MTScript.
+
+Do not write JavaScript, TypeScript, Lua, Python, or standard JSON syntax unless explicitly requested.
+
+## Hard Rule: MTScript Only
+
+This repository is MapTool MTScript.
+
+Do not refactor code into:
+- JavaScript
+- TypeScript
+- Lua
+- Python
+- standard JSON
+- browser DOM code
+- Node-style modules
+- async/await
+- fetch()
+- classes
+
+If existing code looks strange, preserve it unless asked.
+
+MapTool syntax is the target runtime.
+Correct MTScript is better than cleaner-looking non-MTScript.
+
+## File Rules
+
+Files ending in `.mts` are MapTool macro bodies only.
+
+Do not add:
+- Markdown
+- explanations
+- comments outside valid MTScript comments
+- code fences
+- headings
+- prose
+- JSON examples outside strings
+- “Here is the code”
+- trailing notes
+
+Output only valid MTScript content for `.mts` files.
+
+## Macro Import Safety
+
+MapTool macros break if extra text is pasted into the macro body.
+
+When editing `.mts` files:
+
+- Preserve macro-only content.
+- Do not wrap code in ``` fences.
+- Do not add commentary.
+- Do not include test instructions inside the file.
+- Put explanations in `/docs`, not `.mts`.
+
+## Main Goal
+
+Build a Pathfinder 2E Remastered AoN creature importer.
+
+Day-one scope only:
+
+1. Import creature by AoN creature ID
+2. Create a base creature token
+3. Save the full AoN JSON object to a token property
+4. Set token name from the JSON
+5. Set token image from the JSON if available
+6. Add a macro that opens the AoN creature page
+
+Do not parse attacks yet.
+Do not parse abilities yet.
+Do not fill all NPC stats yet.
+Do not generate combat macros yet.
+
+## Architecture
+
+The importer prepares the token.
+
+The existing PF2E framework runs the token.
+
+Use token properties as the storage layer.
+
+Do not store large raw JSON inside generated macros.
+
+## Required Token Properties
+
+AON_JSON
+AON_SourceID
+AON_Type
+AON_ID
+AON_URL
+AON_ImportDate
+AON_ImporterVersion
+AON_ManualReviewNeeded
+
+## Preferred Data Split
+
+AON_JSON stores raw source data and metadata.
+
+Framework NPC properties store playable NPC data.
+
+Future parsed data may be added under AON_JSON.Parsed.
+
+## MapTool Rules
+
+Use MapTool JSON functions:
+
+- json.set()
+- json.get()
+- json.append()
+- json.contains()
+- json.type()
+
+Do not use standard object syntax inside executable MTScript.
+
+Traits and arrays must use json.append().
+
+Avoid nested if/code blocks deeper than 2 levels.
+
+Prefer small macros.
+
+Prefer one macro per responsibility.
+
+Check values exist before reading them.
+
+Do not assume AoN JSON fields always exist.
+
+## Macro Design Rules
+
+Each macro should do one job.
+
+Good:
+- AON_ImportCreatureByID
+- AON_CreateCreatureToken
+- AON_SaveCreatureJSON
+- AON_SetCreatureImage
+- AON_AddOpenPageMacro
+
+Bad:
+- AON_DoEverything
+
+## Refactor Rule
+
+When modifying existing macros:
+
+- Preserve MTScript syntax.
+- Make the smallest working change.
+- Do not restructure working code unless asked.
+- Do not introduce new language features.
+- Do not replace REST.get with fetch().
+- Do not replace json.set/json.get/json.append with normal JSON.
+- Do not replace macro calls with functions.
+
+## Working Examples
+
+Before writing importer code, inspect:
+
+/examples/existing-importer-working.mts
+
+Treat this as the source of truth for:
+- REST.get
+- AoN fetch handling
+- MapTool-compatible JSON usage
+
+Use existing framework macros for token creation style until a dedicated creature-token example exists.
+
+The current AoN index lookup pattern expects full lowercase AoN index IDs such as `armor-3`.
+Creature import by numeric page ID must normalize that input to lowercase `creature-####` before calling shared lookup macros.
+
+Do not replace working patterns with theoretical alternatives.
+
+## Source Link Macro
+
+Every imported creature token must get an Open AoN Page macro.
+
+The macro should read AON_URL from the token property and open that page.
+
+## MTScript References
+
+Primary references:
+
+- https://wiki.rptools.info/index.php/Introduction_to_Macro_Writing
+- https://wiki.rptools.info/index.php/Category:Macro_Function
+- https://wiki.rptools.info/index.php/json.set
+- https://wiki.rptools.info/index.php/json.get
+- https://wiki.rptools.info/index.php/json.append
+- https://wiki.rptools.info/index.php/REST.get
+- https://wiki.rptools.info/index.php/createMacro
+- https://wiki.rptools.info/index.php/setProperty
+- https://wiki.rptools.info/index.php/getProperty
+
+Use MTScript-compatible syntax only.

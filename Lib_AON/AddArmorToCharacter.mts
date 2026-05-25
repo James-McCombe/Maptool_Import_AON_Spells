@@ -5,7 +5,8 @@
 [h: status = input("itemID|armor-3|Enter Item ID|TEXT|WIDTH=60")]
 [h: abort(status)]
 
-[h: itemID = "armor-3"]
+[h: assert(itemID != "", "Enter an AON item ID.", 0)]
+
 [h, macro("GetAonItemByID@Lib:AON"): itemID]
 [h: itemData = macro.return]
 
@@ -43,11 +44,13 @@
 [h: macroText = macroText + '<br>']
 
 [h: macroText = macroText + '<b>Group:</b> ' + itemGroup + '<br>']
+[h: macroText = '<html><p width=300>' + macroText + '</p></html>']
 
 [h: macroName = 'Armor_' + replace(itemName, " ", "_")]
 [h: macroCommand = '[r: "' + macroText + '"]']
 
 [h: newMacro = createMacro(macroName, macroCommand)]
-[h: setMacroProps(newMacro, "group=Equipment", "autoExecute=0")]
+[h: macroProps = json.set("{}", "group", "Equipment", "autoExecute", 0, "tooltip", macroText)]
+[h: setMacroProps(newMacro, macroProps, "json")]
 
 [macro.return = "Created macro: " + macroName]
