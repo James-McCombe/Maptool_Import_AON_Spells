@@ -201,3 +201,33 @@ Primary references:
 - https://wiki.rptools.info/index.php/getProperty
 
 Use MTScript-compatible syntax only.
+
+## Build Request Pattern
+
+Importer macros must support two entry modes:
+
+1. Called with macro.args containing a BuildRequest object
+2. Called directly with no macro.args
+
+If BuildRequest exists, use it.
+
+If no BuildRequest exists, prompt for required fields and build from scratch.
+
+BuildRequest is intended for future front-end macros that select creatures and call the importer.
+
+Required BuildRequest fields for creature import:
+
+- Type = Creature
+- Source = AoN
+- AONID
+- CreateToken
+- SetImage
+- AddOpenPageMacro
+
+The importer must normalize numeric creature IDs into lowercase AoN index IDs.
+
+Example:
+
+3046 → creature-3046
+Creature-3046 → creature-3046
+creature-3046 → creature-3046
