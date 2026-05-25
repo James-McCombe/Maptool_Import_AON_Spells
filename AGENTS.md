@@ -85,17 +85,20 @@ Do not store large raw JSON inside generated macros.
 ## Required Token Properties
 
 AON_JSON
+AON_JSON_RAW
 AON_SourceID
 AON_Type
 AON_ID
 AON_URL
+AON_IMG_URL
 AON_ImportDate
 AON_ImporterVersion
 AON_ManualReviewNeeded
 
 ## Preferred Data Split
 
-AON_JSON stores raw source data and metadata.
+AON_JSON stores source metadata and future parsed data.
+AON_JSON_RAW stores the raw AoN source object.
 
 Framework NPC properties store playable NPC data.
 
@@ -125,6 +128,13 @@ Check values exist before reading them.
 
 Do not assume AoN JSON fields always exist.
 
+Build `createToken()` input with `json.set()`.
+The required starter keys are `name` and `tokenImage`.
+Use visible token name `Creature` for starter imports and set `gmName` to the AoN creature name.
+
+Use `getTokens("json", conditions)` with `area.offsets` to find nearby occupied cells.
+Build the conditions object with `json.set()` and arrays with `json.append()`.
+
 ## Macro Design Rules
 
 Each macro should do one job.
@@ -135,6 +145,7 @@ Good:
 - AON_SaveCreatureJSON
 - AON_SetCreatureImage
 - AON_AddOpenPageMacro
+- _SetCreatureProperties
 
 Bad:
 - AON_DoEverything

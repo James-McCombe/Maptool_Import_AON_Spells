@@ -2,6 +2,8 @@
 
 Store this in token property AON_JSON.
 
+Store the raw AoN source object in token property AON_JSON_RAW.
+
 Example:
 
 {
@@ -14,7 +16,6 @@ Example:
     "ImporterVersion": "1.00",
     "ImportDate": "YYYY-MM-DD"
   },
-  "Raw": {},
   "Parsed": {}
 }
 

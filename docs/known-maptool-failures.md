@@ -55,3 +55,57 @@ Good:
 
 Bad:
 `Creature-3046`
+
+## createToken needs tokenImage
+
+Do not call `createToken()` with only a token name.
+
+Build its data object with `json.set()` and include at least `name` and `tokenImage`.
+
+Use the image from `baseNPCToken` for starter NPC imports.
+
+For starter creature imports, set visible `name` to `Creature` and `gmName` to the AoN creature name.
+
+Store raw AoN JSON in `AON_JSON_RAW`; do not print it to chat.
+
+Set imported creature tokens to the `NPC` property type before setting framework properties.
+
+Check AoN JSON keys with `json.contains()` before setting each NPC property.
+
+When converting the AoN `trait` array to the framework `type` property, join values with ` | `.
+
+Avoid wrapping trait conversion in nested `if/code` blocks.
+
+Use simple guards, set `traitCount` to 0 when missing, and run a single `for/code` loop.
+
+For `sense_markdown`, extract display labels from inside square brackets and store them with a leading pipe, such as `| Darkvision`.
+
+Keep token creation and property setting in separate macros once a test macro grows beyond the smoke-test stage.
+
+Do not pass external image URLs directly to `createToken()`.
+
+`createAsset(name, URL)` may reject AoN image URLs even when the URL appears valid.
+
+Use `baseNPCToken` as the automatic fallback image and output the AoN image URL for manual token creation.
+
+Store the AoN image URL in `AON_IMG_URL` when it is available.
+
+## Anchor tokens may be larger than 1x1
+
+Do not assume `Lib:AON` occupies only one cell when placing generated tokens nearby.
+
+Find the first empty cell to the right of the full token footprint.
+
+Use cell coordinates for placement math.
+
+Good:
+`getTokenX(0)`
+
+Bad:
+Converting pixel widths into cells by assuming a grid size.
+
+## getTokens conditions should be built, not typed
+
+Use `json.set()` and `json.append()` when building `getTokens()` conditions.
+
+Do not hand-write condition JSON unless there is no MapTool-safe alternative.
