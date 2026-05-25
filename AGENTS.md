@@ -231,3 +231,165 @@ Example:
 3046 → creature-3046
 Creature-3046 → creature-3046
 creature-3046 → creature-3046
+
+## Current Campaign Properties
+
+The following token properties now exist in the PF2E campaign and are safe to populate:
+
+- AON_JSON
+- AON_JSON_RAW
+- AON_URL
+- AON_IMG_URL
+- AON_SourceID
+- AON_ID
+- AON_Type
+- AON_Source
+- AON_ImportDate
+- AON_ImporterVersion
+- AON_ManualReviewNeeded
+
+Importer macros should populate these properties during creature import.
+
+AON_JSON_RAW stores the original AoN source object.
+
+AON_JSON stores importer metadata and future parsed data.
+
+Do not remove or rename these properties.
+
+## AON Property Definitions
+
+These token properties must be populated during creature import.
+
+### AON_JSON_RAW
+
+Type:
+- JSON OBJECT
+
+Purpose:
+- Stores the original raw AoN creature object exactly as retrieved from AoN.
+
+Example:
+- Entire creatureData object returned from _GetAonItemByID.
+
+Example value:
+{
+  "id": "creature-3046",
+  "name": "Harpy",
+  ...
+}
+
+### AON_JSON
+
+Type:
+- JSON OBJECT
+
+Purpose:
+- Stores importer metadata and future parsed data.
+
+Structure:
+{
+  "Metadata": {},
+  "Parsed": {}
+}
+
+Example:
+{
+  "Metadata": {
+    "SourceID": "creature-3046",
+    "AONID": "3046",
+    "Type": "Creature",
+    "Source": "AoN",
+    "URL": "https://2e.aonprd.com/Monsters.aspx?ID=3046",
+    "ImageURL": "https://2e.aonprd.com/Images/Monsters/Harpy.png",
+    "ImporterVersion": "1.00",
+    "ManualReviewNeeded": 1
+  },
+  "Parsed": {}
+}
+
+### AON_SourceID
+
+Type:
+- STRING
+
+Purpose:
+- Canonical lowercase AoN object ID.
+
+Example:
+creature-3046
+
+### AON_ID
+
+Type:
+- STRING
+
+Purpose:
+- Numeric AoN page ID without prefix.
+
+Example:
+3046
+
+### AON_Type
+
+Type:
+- STRING
+
+Purpose:
+- Imported AoN object type.
+
+Example:
+Creature
+
+### AON_Source
+
+Type:
+- STRING
+
+Purpose:
+- Source system identifier.
+
+Example:
+AoN
+
+### AON_ImportDate
+
+Type:
+- STRING
+
+Purpose:
+- Date imported.
+
+Example:
+2026-05-25
+
+Use:
+[h: cInfo = getInfo("client")]
+[h: importDate = json.get(cInfo,"timeDate")]
+
+Do not use `getTime()`.
+
+### AON_ImporterVersion
+
+Type:
+- STRING
+
+Purpose:
+- Importer version used to build the token.
+
+Example:
+1.00
+
+### AON_ManualReviewNeeded
+
+Type:
+- NUMBER
+
+Purpose:
+- Indicates imported creature should still be reviewed in the framework NPC editor.
+
+Values:
+0 = reviewed
+1 = review needed
+
+Default:
+1

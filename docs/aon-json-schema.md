@@ -14,7 +14,7 @@ Example:
     "Source": "AoN",
     "URL": "https://2e.aonprd.com/Monsters.aspx?ID=3046",
     "ImporterVersion": "1.00",
-    "ImportDate": "YYYY-MM-DD"
+    "ImportDate": "value from getInfo(\"client\") timeDate"
   },
   "Parsed": {}
 }

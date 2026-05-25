@@ -13,46 +13,70 @@
 [h: hasPrefix = startsWith(aonID, "creature-")]
 [h, if(hasPrefix == 0): aonID = "creature-" + aonID]
 
-[h: targetItem = aonID]
-[h: urlIndex = 'https://elasticsearch.aonprd.com/json-data/aon73-index.json']
-[h: indexJson = REST.get(urlIndex, '{"Accept": ["application/json"], "Accept-Encoding": [""]}', 0)]
+[h: creatureID = aonID]
+[h: idSeparator = indexOf(creatureID, "-")]
+[h: assert(idSeparator >= 0, "Creature ID must include a hyphen: " + creatureID, 0)]
+[h: aonCreatureNumber = substring(creatureID, idSeparator + 1)]
+[h: aonURL = "https://2e.aonprd.com/Monsters.aspx?ID=" + aonCreatureNumber]
+[h: aonType = "Creature"]
+[h: aonSource = "AoN"]
+[h: importerVersion = "1.00"]
+[h: manualReviewNeeded = 1]
 
-[h: assert(indexJson != "", "Failed to load AON index file.", 0)]
-[h: assert(json.type(indexJson) == "OBJECT", "AON index response was not a JSON object.", 0)]
+[h, macro("_GetAonItemByID@Lib:AON"): creatureID]
+[h: creatureData = macro.return]
 
-[h: indexKeyFound = ""]
+[h: assert(creatureData != "", "Failed to retrieve creature data: " + creatureID, 0)]
+[h: assert(json.type(creatureData) == "OBJECT", "Creature data was not a JSON object: " + creatureID, 0)]
 
-[h: keys = json.fields(indexJson)]
-[h: keyCount = listCount(keys)]
+[h: creatureName = creatureID]
+[h, if(json.contains(creatureData, "name")): creatureName = json.get(creatureData, "name")]
 
-[h, for(i, 0, keyCount), code: {
-	[h, if(indexKeyFound == ""), code: {
-		[h: key = listGet(keys, i)]
-		[h: arr = json.get(indexJson, key)]
-		[h: found = json.contains(arr, targetItem)]
-		[h, if(found == 1): indexKeyFound = key]
+[h: baseTokenID = findToken("baseNPCToken")]
+[h: assert(baseTokenID != "", "Could not find baseNPCToken.", 0)]
+[h, token(baseTokenID): baseTokenImage = getTokenImage()]
+[h: assert(baseTokenImage != "", "baseNPCToken does not have a token image.", 0)]
+[h: creatureImage = baseTokenImage]
+[h: creatureImageURL = ""]
+
+[h, if(json.contains(creatureData, "image")), code: {
+	[h: creatureImages = json.get(creatureData, "image")]
+	[h, if(json.type(creatureImages) == "ARRAY" && json.length(creatureImages) > 0), code: {
+		[h: creatureImagePath = json.get(creatureImages, 0)]
+		[h: creatureImageURL = "https://2e.aonprd.com" + creatureImagePath]
 	}]
 }]
+[h: assert(creatureImage != "", "Could not prepare a token image for " + creatureID + ".", 0)]
 
-[h: assert(indexKeyFound != "", "Item not found in aon73-index.json: " + targetItem, 0)]
+[h: libTokenID = findToken("Lib:AON")]
+[h: assert(libTokenID != "", "Could not find Lib:AON token.", 0)]
+[h, token(libTokenID): libX = getTokenX(0)]
+[h, token(libTokenID): libY = getTokenY(0)]
 
-[h: urlData = 'https://elasticsearch.aonprd.com/json-data/' + indexKeyFound + '.json']
-[h: htmlData = REST.get(urlData, '{"Accept": ["application/json"], "Accept-Encoding": [""]}', 0)]
+[h: libCellWidth = 2]
 
-[h: assert(htmlData != "", "Failed to load AON data file: " + indexKeyFound + ".json", 0)]
-[h: assert(json.type(htmlData) == "ARRAY", "AON bucket response was not a JSON array.", 0)]
-
-[h: creatureData = ""]
-[h: dataCount = json.length(htmlData)]
-
-[h, for(i, 0, dataCount), code: {
-	[h, if(creatureData == ""), code: {
-		[h: obj = json.get(htmlData, i)]
-		[h: objID = json.get(obj, "id")]
-		[h, if(objID == targetItem): creatureData = obj]
-	}]
+[h: targetOffset = libCellWidth]
+[h: foundEmptySpot = 0]
+[h, while(foundEmptySpot == 0 && targetOffset < libCellWidth + 20), code: {
+	[h: areaOffsets = json.append("[]", json.set("{}", "x", targetOffset, "y", 0))]
+	[h: area = json.set("{}", "token", libTokenID, "offsets", areaOffsets)]
+	[h: tokenLayers = json.append("[]", "TOKEN", "HIDDEN", "OBJECT", "BACKGROUND")]
+	[h: conditions = json.set("{}", "layer", tokenLayers, "area", area)]
+	[h: spotTokens = getTokens("json", conditions)]
+	[h, if(json.length(spotTokens) == 0): foundEmptySpot = 1]
+	[h, if(foundEmptySpot == 0): targetOffset = targetOffset + 1]
 }]
+[h: assert(foundEmptySpot == 1, "Could not find an empty spot to the right of Lib:AON.", 0)]
 
-[h: assert(creatureData != "", "Bucket loaded, but creature id was not found: " + targetItem, 0)]
+[h: newX = libX + targetOffset]
+[h: newY = libY]
+[h: tokenData = json.set("{}", "name", "Creature", "gmName", creatureName, "tokenImage", creatureImage)]
+[h: tokenData = json.set(tokenData, "x", newX, "y", newY)]
+[h: newTokenID = createToken(tokenData)]
+[h: assert(newTokenID != "", "Failed to create creature token.", 0)]
 
-[macro.return = creatureData]
+[h: propertyArgs = json.set("{}", "tokenID", newTokenID, "creatureData", creatureData, "aonURL", aonURL, "aonImageURL", creatureImageURL, "creatureID", creatureID, "aonCreatureNumber", aonCreatureNumber, "aonType", aonType, "aonSource", aonSource, "importerVersion", importerVersion, "manualReviewNeeded", manualReviewNeeded)]
+[h, macro("_SetCreatureProperties@Lib:AON"): propertyArgs]
+
+[r: "Success: imported AoN creature " + creatureName + " (" + creatureID + ")."]
+[r, if(creatureImageURL != ""): "<br>AoN image URL: " + creatureImageURL]

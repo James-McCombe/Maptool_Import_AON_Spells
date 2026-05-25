@@ -32,6 +32,15 @@ Use json.contains() where possible.
 
 Do not hide large source JSON in data macros.
 
+## getTime is not a MapTool function
+
+Bad:
+[h: importDate = getTime()]
+
+Good:
+[h: cInfo = getInfo("client")]
+[h: importDate = json.get(cInfo,"timeDate")]
+
 ## Macro files are not documentation files
 
 Files ending in `.mts` should contain only importable macro body content.
