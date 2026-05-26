@@ -118,3 +118,17 @@ Converting pixel widths into cells by assuming a grid size.
 Use `json.set()` and `json.append()` when building `getTokens()` conditions.
 
 Do not hand-write condition JSON unless there is no MapTool-safe alternative.
+
+## GM-only clean output
+
+Use combined roll options when generated macros should show clean text only to the GM.
+
+Good:
+[g,r: 1d20 + Perception]
+
+Bad:
+[g: 1d20 + Perception]
+
+The `g` option restricts visibility to GMs.
+
+The `r` option renders plain output without the extra roll display.

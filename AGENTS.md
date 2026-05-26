@@ -135,6 +135,12 @@ Use visible token name `Creature` for starter imports and set `gmName` to the Ao
 Use `getTokens("json", conditions)` with `area.offsets` to find nearby occupied cells.
 Build the conditions object with `json.set()` and arrays with `json.append()`.
 
+Most generated output macros should show results to the GM only.
+Use combined roll options for clean GM-only output:
+[g,r: expression]
+
+Do not use `[g: expression]` when clean plain output is needed.
+
 ## Macro Design Rules
 
 Each macro should do one job.
@@ -393,3 +399,57 @@ Values:
 
 Default:
 1
+
+## REBUILD_AON Rule
+
+REBUILD_AON is a generated token macro used to rebuild an imported creature from stored AoN data.
+
+It must not fetch AoN again.
+
+It must read existing token properties:
+
+- AON_JSON_RAW
+- AON_URL
+- AON_IMG_URL
+- AON_SourceID
+- AON_ID
+- AON_Type
+
+Purpose:
+
+- Re-run framework property population
+- Re-apply current importer mappings
+- Support future parser upgrades
+- Avoid re-importing from AoN
+- Preserve the same token
+
+Required behavior:
+
+1. Read AON_JSON_RAW from the current token.
+2. Assert AON_JSON_RAW is not blank.
+3. Assert AON_JSON_RAW is a JSON object.
+4. Read AON_URL and AON_IMG_URL from the current token.
+5. Build propertyArgs with:
+   - tokenID = currentToken()
+   - creatureData = AON_JSON_RAW
+   - aonURL = AON_URL
+   - aonImageURL = AON_IMG_URL
+   - creatureID = AON_SourceID
+   - aonCreatureNumber = AON_ID
+   - aonSource = "AoN"
+   - aonType = AON_Type
+   - importerVersion = current importer version
+   - manualReviewNeeded = 1
+6. Call _SetCreatureProperties@Lib:AON.
+7. Do not create a new token.
+8. Do not change token position.
+9. Do not change token image unless explicitly requested later.
+10. Do not fetch from AoN.
+11. Do not parse attacks yet.
+12. Do not generate combat macros yet.
+
+REBUILD_AON should be safe to run multiple times.
+
+It may overwrite framework NPC properties populated from AoN.
+
+It should not delete existing custom macros.

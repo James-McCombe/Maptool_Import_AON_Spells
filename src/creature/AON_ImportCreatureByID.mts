@@ -78,5 +78,8 @@
 [h: propertyArgs = json.set("{}", "tokenID", newTokenID, "creatureData", creatureData, "aonURL", aonURL, "aonImageURL", creatureImageURL, "creatureID", creatureID, "aonCreatureNumber", aonCreatureNumber, "aonType", aonType, "aonSource", aonSource, "importerVersion", importerVersion, "manualReviewNeeded", manualReviewNeeded)]
 [h, macro("_SetCreatureProperties@Lib:AON"): propertyArgs]
 
+[h: openAonArgs = json.set("{}", "tokenID", newTokenID)]
+[h, macro("_AddOpenAonPageMacro@Lib:AON"): openAonArgs]
+
 [r: "Success: imported AoN creature " + creatureName + " (" + creatureID + ")."]
 [r, if(creatureImageURL != ""): "<br>AoN image URL: " + creatureImageURL]
