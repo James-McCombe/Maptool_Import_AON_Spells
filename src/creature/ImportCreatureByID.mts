@@ -90,5 +90,7 @@
 
 [h, macro("_AddParsedAttackMacros@Lib:AON"): openAonArgs]
 
+[h, macro("_AddParsedSpecialAbilities@Lib:AON"): openAonArgs]
+
 [r: "Success: imported AoN creature " + creatureName + " (" + creatureID + ")."]
 [r, if(creatureImageURL != ""): "<br>AoN image URL: " + creatureImageURL]

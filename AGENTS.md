@@ -397,7 +397,29 @@ RawBlock is the only parsed ability field that should preserve the original AoN 
 Trigger and Requirements default to blank until explicit parsing is added.
 
 Do not call feat-style framework macros while parsing abilities.
-Future macro generation may decide whether a Parsed.Abilities entry should become a framework macro.
+Generated special ability macros may use Parsed.Abilities entries as Feat@Lib:Pf2 macro args.
+
+### Generated Parsed Special Ability Macros
+
+Parsed special ability macros are generated from AON_JSON.Parsed.Abilities after creature properties are saved.
+
+Generated special ability macros may embed the small framework-shaped ability args generated from AON_JSON.Parsed.Abilities.
+They should assign framework fields directly, build FeatData with json.set(), and pass FeatData as macro.args to Feat@Lib:Pf2.
+
+Generated framework special ability macro fields should include:
+
+- Name
+- FeatLevel
+- Traits
+- Trigger
+- Requirements
+- Action
+- Text
+- FeatData
+
+Generated special ability macro labels may append action diamonds for 1, 2, and 3 action abilities.
+Generated special ability macros must not re-parse AoN markdown.
+Generated special ability macros must not fetch from AoN.
 
 ### Generated Parsed Attack Macros
 
@@ -614,7 +636,7 @@ Required behavior:
 9. Do not change token image unless explicitly requested later.
 10. Do not fetch from AoN.
 11. Re-run current parsed data helpers from AON_JSON_RAW.
-12. Re-add missing generated parsed attack macros without duplicating existing ones.
+12. Re-add or update generated parsed attack and special ability macros without duplicating stale copies.
 
 REBUILD_AON should be safe to run multiple times.
 

@@ -24,6 +24,8 @@
 [h: macroCommand = macroCommand + decode("%0A") + "[h, macro('_SetCreatureProperties@Lib:AON'): propertyArgs]"]
 [h: macroCommand = macroCommand + decode("%0A") + "[h: attackMacroArgs = json.set('{}', 'tokenID', tokenID)]"]
 [h: macroCommand = macroCommand + decode("%0A") + "[h, macro('_AddParsedAttackMacros@Lib:AON'): attackMacroArgs]"]
+[h: macroCommand = macroCommand + decode("%0A") + "[h: abilityMacroArgs = json.set('{}', 'tokenID', tokenID)]"]
+[h: macroCommand = macroCommand + decode("%0A") + "[h, macro('_AddParsedSpecialAbilities@Lib:AON'): abilityMacroArgs]"]
 [h: macroCommand = macroCommand + decode("%0A") + "[g,r: 'AON properties rebuilt.']"]
 [h: macroProps = json.set("{}", "label", "REBUILD_AON", "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", "z_AON")]
 [h: createMacro(macroProps, tokenID)]
