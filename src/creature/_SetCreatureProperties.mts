@@ -21,6 +21,8 @@
 [h: importerVersion = "1.00"]
 [h: attackParserVersion = "1.00"]
 [h: abilityParserVersion = "1.00"]
+[h: attackParseSource = "markdown"]
+[h: abilityParseSource = "creature_ability + markdown"]
 [h: manualReviewNeeded = 1]
 [h: aonCreatureNumber = "" + aonCreatureNumber]
 [h: importerVersion = "" + importerVersion]
@@ -30,6 +32,8 @@
 [h: parsed = "{}"]
 [h: parsed = json.set(parsed, "AttackParserVersion", attackParserVersion)]
 [h: parsed = json.set(parsed, "AbilityParserVersion", abilityParserVersion)]
+[h: parsed = json.set(parsed, "AttackParseSource", attackParseSource)]
+[h: parsed = json.set(parsed, "AbilityParseSource", abilityParseSource)]
 [h, if(parsedAttacks == ""), code: {
 	[h, macro("_ParseCreatureAttacks@Lib:AON"): creatureData]
 	[h: parsedAttacks = macro.return]
