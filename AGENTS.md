@@ -146,7 +146,7 @@ Do not use `[g: expression]` when clean plain output is needed.
 Each macro should do one job.
 
 Good:
-- AON_ImportCreatureByID
+- ImportCreatureByID
 - AON_CreateCreatureToken
 - AON_SaveCreatureJSON
 - AON_SetCreatureImage
