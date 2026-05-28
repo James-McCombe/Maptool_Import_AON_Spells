@@ -58,7 +58,7 @@ When editing `.mts` files:
 
 Build a Pathfinder 2E Remastered AoN creature importer.
 
-Day-one scope only:
+Current creature importer scope:
 
 1. Import creature by AoN creature ID
 2. Create a base creature token
@@ -66,11 +66,8 @@ Day-one scope only:
 4. Set token name from the JSON
 5. Set token image from the JSON if available
 6. Add a macro that opens the AoN creature page
-
-Do not parse attacks yet.
-Do not parse abilities yet.
-Do not fill all NPC stats yet.
-Do not generate combat macros yet.
+7. Parse creature attacks and abilities into AON_JSON.Parsed
+8. Generate lightweight parsed attack wrapper macros that call the framework
 
 ## Architecture
 
@@ -266,6 +263,177 @@ Do not remove or rename these properties.
 
 These token properties must be populated during creature import.
 
+## AON_JSON Structure
+
+AON_JSON is the importer-controlled metadata object.
+
+AON_JSON_RAW stores the full raw AoN object.
+AON_JSON must NOT store the full raw AoN object.
+
+AON_JSON must use this structure:
+
+{
+  "Metadata": {
+    "SourceID": "creature-3046",
+    "AONID": "3046",
+    "Type": "Creature",
+    "Source": "AoN",
+    "URL": "https://2e.aonprd.com/Monsters.aspx?ID=3046",
+    "ImageURL": "https://2e.aonprd.com/path/to/image.png",
+    "ImporterVersion": "1.00",
+    "ImportDate": "MapTool client timeDate value",
+    "ManualReviewNeeded": 1
+  },
+  "Parsed": {}
+}
+
+Field meanings:
+
+- Metadata.SourceID is the lowercase AoN index ID, such as creature-3046.
+- Metadata.AONID is the numeric AoN page ID, such as 3046.
+- Metadata.Type is the imported object type, currently Creature.
+- Metadata.Source is the source system, currently AoN.
+- Metadata.URL is the AoN page URL.
+- Metadata.ImageURL is the AoN image URL when available, otherwise blank.
+- Metadata.ImporterVersion is the importer version string.
+- Metadata.ImportDate is the MapTool import date.
+- Metadata.ManualReviewNeeded defaults to 1.
+- Parsed starts as an empty JSON object and will later hold parsed attacks, abilities, spells, and parser versions.
+
+## Parsed Creature Data Rules
+
+Parsed creature data lives under AON_JSON.Parsed.
+
+Parsed data is importer-controlled derived data.
+Do not remove source data from AON_JSON_RAW.
+Do not generate framework combat macros while parsing.
+
+### Parsed.Attacks
+
+Parsed.Attacks stores only actual AoN Strike blocks from **Melee** and **Ranged** sections.
+
+Do not put creature abilities such as Hungry Winds, Rapid Strikes, Stench, or Putrid Plague into Parsed.Attacks unless AoN presents them as **Melee** or **Ranged** strike blocks.
+
+Each attack object should preserve source inspection fields and also include framework-shaped fields for future NPCSimpleAttack macro args.
+
+Required framework-shaped attack fields:
+
+- AttackName
+- AttackType
+- Traits
+- AttackModifier
+- Damage
+- DamageType
+- Damage2
+- Damage2Type
+- Effect
+- Action
+- ApplyAttackKeyword
+
+AttackName is the strike name, such as jaws, talon, or claw.
+AttackType is Melee or Ranged.
+Traits is a JSON array of lowercase trait names.
+The attack type trait, such as melee or ranged, should be included in Traits.
+AttackModifier must be stored as a string.
+Action must be stored as a string for framework macro args.
+ActionText may preserve the original AoN action text, such as Single Action.
+ApplyAttackKeyword defaults to 1 for normal imported strike attacks.
+
+Remove AoN markdown URLs from AttackText.
+Keep RawBlock as the original parsed AoN markdown slice.
+
+Damage and Damage2 should contain only damage dice or explicit numeric damage values.
+DamageType and Damage2Type should contain the damage type text.
+Effect should contain non-damage riders or extra rules text.
+
+Examples:
+
+2d8+4 piercing plus putrid plague:
+- Damage = 2d8+4
+- DamageType = piercing
+- Damage2 = blank
+- Damage2Type = blank
+- Effect = putrid plague
+
+2d4 fire plus 1 persistent acid damage:
+- Damage = 2d4
+- DamageType = fire
+- Damage2 = 1
+- Damage2Type = persistent acid
+- Effect = blank
+
+AoN indexed attack metadata such as attack_bonus, attack_bonus_scale_number, strike_damage_average, and strike_damage_scale_number may be stored on the parsed attack object.
+If AoN provides a single attack_bonus_scale or attack_bonus_scale_number value, apply it to every parsed attack.
+
+### Parsed.Abilities
+
+Parsed.Abilities stores entries from the AoN creature_ability list.
+
+Creature abilities remain abilities even if they reference Strikes or can later be represented by framework macros.
+Hungry Winds, Rapid Strikes, Stench, and Putrid Plague are abilities, not Parsed.Attacks, unless AoN presents them as **Melee** or **Ranged** strike blocks.
+
+Ability parsing should preserve:
+
+- Name
+- FeatLevel
+- Traits
+- Trigger
+- Requirements
+- Action
+- Text
+- TraitsText
+- DescriptionText
+- RawBlock
+
+Name, FeatLevel, Traits, Trigger, Requirements, Action, and Text are shaped for future feat-style framework macro args.
+FeatLevel may use the creature level when no ability-specific level exists.
+Traits must be a JSON array.
+Ability Traits should preserve AoN display casing, such as Air, Concentrate, or Primal.
+Action must be stored as a framework action string when possible: 1, 2, 3, R, or F.
+ActionText may preserve the original AoN action text.
+Text should be the cleaned ability rules text with AoN markdown URLs removed.
+TraitsText and DescriptionText should also remove AoN markdown URLs.
+RawBlock is the only parsed ability field that should preserve the original AoN markdown URLs.
+Trigger and Requirements default to blank until explicit parsing is added.
+
+Do not call feat-style framework macros while parsing abilities.
+Future macro generation may decide whether a Parsed.Abilities entry should become a framework macro.
+
+### Generated Parsed Attack Macros
+
+Parsed attack macros are generated from AON_JSON.Parsed.Attacks after creature properties are saved.
+
+Generated attack macros must not embed the full raw AoN object or a copied attack payload.
+They may embed the small framework-shaped attack args generated from AON_JSON.Parsed.Attacks.
+They should assign framework fields directly, build AttackData with json.set(), and pass AttackData as macro.args to NPCSimpleAttack@Lib:Pf2.
+
+Generated framework attack macro fields should include:
+
+- AttackName
+- DamageTooltip
+- DamageRoll
+- AttackType
+- Traits
+- AttackModifier
+- Damage
+- DamageType
+- Damage2
+- Damage2Type
+- Effect
+- Action
+- ApplyAttackKeyword
+- AttackData
+
+Generated attack macro Traits should omit the synthetic attack type trait, such as melee or ranged, because AttackType carries that value.
+
+Generated attack macros are framework-facing wrappers.
+They must not re-parse AoN markdown.
+They must not fetch from AoN.
+They must not turn creature abilities into attacks.
+
+Rebuild should call the parsed attack macro helper after _SetCreatureProperties@Lib:AON so parser upgrades can add or update generated attack macros.
+The helper should update matching generated attack macros instead of duplicating stale copies.
+
 ### AON_JSON_RAW
 
 Type:
@@ -445,8 +613,8 @@ Required behavior:
 8. Do not change token position.
 9. Do not change token image unless explicitly requested later.
 10. Do not fetch from AoN.
-11. Do not parse attacks yet.
-12. Do not generate combat macros yet.
+11. Re-run current parsed data helpers from AON_JSON_RAW.
+12. Re-add missing generated parsed attack macros without duplicating existing ones.
 
 REBUILD_AON should be safe to run multiple times.
 

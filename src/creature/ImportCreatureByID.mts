@@ -29,6 +29,11 @@
 [h: assert(creatureData != "", "Failed to retrieve creature data: " + creatureID, 0)]
 [h: assert(json.type(creatureData) == "OBJECT", "Creature data was not a JSON object: " + creatureID, 0)]
 
+[h, macro("_ParseCreatureAttacks@Lib:AON"): creatureData]
+[h: parsedAttacks = macro.return]
+[h, macro("_ParseCreatureAbilities@Lib:AON"): creatureData]
+[h: parsedAbilities = macro.return]
+
 [h: creatureName = creatureID]
 [h, if(json.contains(creatureData, "name")): creatureName = json.get(creatureData, "name")]
 
@@ -75,11 +80,15 @@
 [h: newTokenID = createToken(tokenData)]
 [h: assert(newTokenID != "", "Failed to create creature token.", 0)]
 
-[h: propertyArgs = json.set("{}", "tokenID", newTokenID, "creatureData", creatureData, "aonURL", aonURL, "aonImageURL", creatureImageURL, "creatureID", creatureID, "aonCreatureNumber", aonCreatureNumber, "aonType", aonType, "aonSource", aonSource, "importerVersion", importerVersion, "manualReviewNeeded", manualReviewNeeded)]
+[h: propertyArgs = json.set("{}", "tokenID", newTokenID, "creatureData", creatureData, "parsedAttacks", parsedAttacks, "parsedAbilities", parsedAbilities, "aonURL", aonURL, "aonImageURL", creatureImageURL, "creatureID", creatureID, "aonCreatureNumber", aonCreatureNumber, "aonType", aonType, "aonSource", aonSource, "importerVersion", importerVersion, "manualReviewNeeded", manualReviewNeeded)]
 [h, macro("_SetCreatureProperties@Lib:AON"): propertyArgs]
 
 [h: openAonArgs = json.set("{}", "tokenID", newTokenID)]
 [h, macro("_AddOpenAonPageMacro@Lib:AON"): openAonArgs]
+
+[h, macro("_AddRebuildAonMacro@Lib:AON"): openAonArgs]
+
+[h, macro("_AddParsedAttackMacros@Lib:AON"): openAonArgs]
 
 [r: "Success: imported AoN creature " + creatureName + " (" + creatureID + ")."]
 [r, if(creatureImageURL != ""): "<br>AoN image URL: " + creatureImageURL]
