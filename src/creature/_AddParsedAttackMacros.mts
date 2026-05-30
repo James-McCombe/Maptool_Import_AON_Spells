@@ -104,7 +104,7 @@
 	[h: macroCommand = macroCommand + "[h:Effect='" + effect + "']"]
 	[h: macroCommand = macroCommand + "[h:Action='" + action + "']"]
 	[h: macroCommand = macroCommand + "[h:ApplyAttackKeyword=" + applyAttackKeyword + "]"]
-	[h: macroCommand = macroCommand + "[h:AttackData=json.set('{}','AttackName',AttackName,'AttackType',AttackType,'Traits',Traits,'AttackModifier',AttackModifier,'Damage',Damage,'DamageType',DamageType,'Damage2',Damage2,'Damage2Type',Damage2Type,'Effect',Effect,'Action',Action,'ApplyAttackKeyword',ApplyAttackKeyword)]"]
+	[h: macroCommand = macroCommand + "[h:AttackData=json.set('{}','AttackName',AttackName,'DamageTooltip',DamageTooltip,'DamageRoll',DamageRoll,'AttackType',AttackType,'Traits',Traits,'AttackModifier',AttackModifier,'Damage',Damage,'DamageType',DamageType,'Damage2',Damage2,'Damage2Type',Damage2Type,'Effect',Effect,'Action',Action,'ApplyAttackKeyword',ApplyAttackKeyword)]"]
 	[h: macroCommand = macroCommand + "[h, macro('_NPCSimpleAttack@Lib:AON'):AttackData]"]
 	[h: macroCommand = macroCommand + "[g,r: macro.return]"]
 
