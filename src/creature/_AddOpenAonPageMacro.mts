@@ -8,4 +8,10 @@
 [h: macroCommand = macroCommand + decode("%0A") + "[h: assert(aonURL != '', 'AON_URL is blank.', 0)]"]
 [h: macroCommand = macroCommand + decode("%0A") + "[g,r: '<html><a href=' + aonURL + '>Open AoN Page</a></html>']"]
 [h: macroProps = json.set("{}", "label", "OPEN_AON", "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", "z_AON")]
-[h: createMacro(macroProps, tokenID)]
+[h: existingIndexes = ""]
+[h, token(tokenID): existingIndexes = getMacroIndexes("OPEN_AON")]
+[h, if(existingIndexes == ""): createMacro(macroProps, tokenID)]
+[h, if(existingIndexes != ""), code: {
+	[h: existingIndex = listGet(existingIndexes, 0)]
+	[h, token(tokenID): setMacroProps(existingIndex, macroProps, "json")]
+}]
