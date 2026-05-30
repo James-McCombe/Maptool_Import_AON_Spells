@@ -4,6 +4,22 @@ This repo uses MapTool MTScript.
 
 Do not write JavaScript, TypeScript, Lua, Python, or standard JSON syntax unless explicitly requested.
 
+## Additional Documentation
+
+Before making architecture or roadmap changes, review:
+
+- ROADMAP.md
+  - Planned work
+  - Priorities
+  - Future importer expansion
+
+- DECISIONS.md
+  - Architecture decisions
+  - Design rationale
+  - Historical implementation choices
+
+AGENTS.md remains the source of truth for coding rules, MTScript requirements, and repo guardrails.
+
 ## Hard Rule: MTScript Only
 
 This repository is MapTool MTScript.
