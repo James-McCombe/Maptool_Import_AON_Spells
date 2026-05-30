@@ -9,6 +9,8 @@
 [h, if(json.contains(args, "parsedAttacks")): parsedAttacks = json.get(args, "parsedAttacks")]
 [h: parsedAbilities = ""]
 [h, if(json.contains(args, "parsedAbilities")): parsedAbilities = json.get(args, "parsedAbilities")]
+[h: parsedCreatureInfo = ""]
+[h, if(json.contains(args, "parsedCreatureInfo")): parsedCreatureInfo = json.get(args, "parsedCreatureInfo")]
 
 [h: assert(tokenID != "", "No token id passed to _SetCreatureProperties.", 0)]
 [h: assert(creatureData != "", "No creature data passed to _SetCreatureProperties.", 0)]
@@ -21,8 +23,10 @@
 [h: importerVersion = "1.00"]
 [h: attackParserVersion = "1.00"]
 [h: abilityParserVersion = "1.00"]
+[h: creatureInfoParserVersion = "1.00"]
 [h: attackParseSource = "markdown"]
 [h: abilityParseSource = "creature_ability + markdown"]
+[h: creatureInfoParseSource = "markdown"]
 [h: manualReviewNeeded = 1]
 [h: aonCreatureNumber = "" + aonCreatureNumber]
 [h: importerVersion = "" + importerVersion]
@@ -32,8 +36,10 @@
 [h: parsed = "{}"]
 [h: parsed = json.set(parsed, "AttackParserVersion", attackParserVersion)]
 [h: parsed = json.set(parsed, "AbilityParserVersion", abilityParserVersion)]
+[h: parsed = json.set(parsed, "CreatureInfoParserVersion", creatureInfoParserVersion)]
 [h: parsed = json.set(parsed, "AttackParseSource", attackParseSource)]
 [h: parsed = json.set(parsed, "AbilityParseSource", abilityParseSource)]
+[h: parsed = json.set(parsed, "CreatureInfoParseSource", creatureInfoParseSource)]
 [h, if(parsedAttacks == ""), code: {
 	[h, macro("_ParseCreatureAttacks@Lib:AON"): creatureData]
 	[h: parsedAttacks = macro.return]
@@ -44,6 +50,11 @@
 	[h: parsedAbilities = macro.return]
 }]
 [h: parsed = json.set(parsed, "Abilities", parsedAbilities)]
+[h, if(parsedCreatureInfo == ""), code: {
+	[h, macro("_ParseCreatureInfo@Lib:AON"): creatureData]
+	[h: parsedCreatureInfo = macro.return]
+}]
+[h: parsed = json.set(parsed, "CreatureInfo", parsedCreatureInfo)]
 [h: aonJson = json.set("{}", "Metadata", metadata, "Parsed", parsed)]
 
 [h: setPropertyType("NPC", tokenID)]
