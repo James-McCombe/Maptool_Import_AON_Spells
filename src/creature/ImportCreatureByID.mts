@@ -1,7 +1,9 @@
 [h: buildRequest = macro.args]
 [h: aonID = ""]
 
-[h, if(buildRequest != "" && json.type(buildRequest) == "OBJECT" && json.contains(buildRequest, "BuildRequest")): aonID = json.get(buildRequest, "BuildRequest")]
+[h: requestData = buildRequest]
+[h, if(buildRequest != "" && json.type(buildRequest) == "OBJECT" && json.contains(buildRequest, "BuildRequest")): requestData = json.get(buildRequest, "BuildRequest")]
+[h, if(requestData != "" && json.type(requestData) == "OBJECT" && json.contains(requestData, "AONID")): aonID = json.get(requestData, "AONID")]
 
 [h, if(aonID == ""), code: {
 	[h: status = input("aonID|3046|Enter AoN Creature ID|TEXT|WIDTH=60")]

@@ -54,6 +54,25 @@
 	[h, if(json.contains(macroTraits, "melee")): macroTraits = json.remove(macroTraits, json.indexOf(macroTraits, "melee"))]
 	[h, if(json.contains(macroTraits, "ranged")): macroTraits = json.remove(macroTraits, json.indexOf(macroTraits, "ranged"))]
 
+	[h: tooltipTraits = ""]
+	[h: macroTraitCount = json.length(macroTraits)]
+	[h, for(t, 0, macroTraitCount), code: {
+		[h: tooltipTrait = json.get(macroTraits, t)]
+		[h: tooltipTraits = listAppend(tooltipTraits, tooltipTrait, ", ")]
+	}]
+
+	[h: tooltipActions = ""]
+	[h, if(action == "1"): tooltipActions = "<img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> "]
+	[h, if(action == "2"): tooltipActions = "<img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> <img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> "]
+	[h, if(action == "3"): tooltipActions = "<img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> <img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> <img height=15 width=15 src='asset://e7876556a71025c1a63de5aa47553c43' /> "]
+
+	[h: tooltipDamage = trim(damage + " " + damageType)]
+	[h: tooltipDamage2 = trim(damage2 + " " + damage2Type)]
+	[h, if(tooltipDamage != "" && tooltipDamage2 != ""): tooltipDamage = tooltipDamage + " plus " + tooltipDamage2]
+	[h, if(tooltipDamage == "" && tooltipDamage2 != ""): tooltipDamage = tooltipDamage2]
+	[h, if(tooltipDamage != "" && effect != ""): tooltipDamage = tooltipDamage + " plus " + effect]
+	[h, if(tooltipDamage == "" && effect != ""): tooltipDamage = effect]
+
 	[h: displayAttackName = replace(displayAttackName, "'", "&#39;")]
 	[h: attackType = replace(attackType, "'", "&#39;")]
 	[h: attackModifier = replace(attackModifier, "'", "&#39;")]
@@ -63,6 +82,14 @@
 	[h: damage2Type = replace(damage2Type, "'", "&#39;")]
 	[h: effect = replace(effect, "'", "&#39;")]
 	[h: action = replace(action, "'", "&#39;")]
+	[h: tooltipTraits = replace(tooltipTraits, "'", "&#39;")]
+	[h: tooltipDamage = replace(tooltipDamage, "'", "&#39;")]
+
+	[h: macroTooltip = "<html><b>" + attackType + "</b> " + tooltipActions + displayAttackName]
+	[h, if(tooltipTraits != ""): macroTooltip = macroTooltip + " (" + tooltipTraits + ")"]
+	[h: macroTooltip = macroTooltip + "<br><b>Attack:</b> " + attackModifier]
+	[h, if(tooltipDamage != ""): macroTooltip = macroTooltip + "<br><b>Damage:</b> " + tooltipDamage]
+	[h: macroTooltip = macroTooltip + "</html>"]
 
 	[h: macroCommand = "[h:AttackName='" + displayAttackName + "']"]
 	[h: macroCommand = macroCommand + "[h:DamageTooltip='" + damage + "']"]
@@ -78,11 +105,12 @@
 	[h: macroCommand = macroCommand + "[h:Action='" + action + "']"]
 	[h: macroCommand = macroCommand + "[h:ApplyAttackKeyword=" + applyAttackKeyword + "]"]
 	[h: macroCommand = macroCommand + "[h:AttackData=json.set('{}','AttackName',AttackName,'AttackType',AttackType,'Traits',Traits,'AttackModifier',AttackModifier,'Damage',Damage,'DamageType',DamageType,'Damage2',Damage2,'Damage2Type',Damage2Type,'Effect',Effect,'Action',Action,'ApplyAttackKeyword',ApplyAttackKeyword)]"]
-	[h: macroCommand = macroCommand + "[macro('NPCSimpleAttack@Lib:Pf2'):AttackData]"]
+	[h: macroCommand = macroCommand + "[h, macro('_NPCSimpleAttack@Lib:AON'):AttackData]"]
+	[h: macroCommand = macroCommand + "[g,r: macro.return]"]
 
 	[h: existingIndexes = ""]
 	[h, token(tokenID): existingIndexes = getMacroIndexes(macroLabel)]
-	[h: macroProps = json.set("{}", "label", macroLabel, "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", macroGroup)]
+	[h: macroProps = json.set("{}", "label", macroLabel, "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", macroGroup, "tooltip", macroTooltip)]
 	[h, if(existingIndexes == ""): createMacro(macroProps, tokenID)]
 	[h, if(existingIndexes != ""), code: {
 		[h: existingIndex = listGet(existingIndexes, 0)]

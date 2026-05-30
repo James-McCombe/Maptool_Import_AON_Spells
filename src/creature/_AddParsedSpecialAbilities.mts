@@ -41,13 +41,36 @@
 	[h: macroLabel = abilityName]
 	[h, if(actionDiamonds != ""): macroLabel = abilityName + " <span style=" + decode("%22") + "color:black" + decode("%22") + ">" + actionDiamonds + "</span>"]
 
+	[h: tooltipTraits = ""]
+	[h: traitCount = json.length(traits)]
+	[h, for(t, 0, traitCount), code: {
+		[h: tooltipTrait = json.get(traits, t)]
+		[h: tooltipTraits = listAppend(tooltipTraits, tooltipTrait, ", ")]
+	}]
+
+	[h: actionHtml = ""]
+	[h, if(action == "1"): actionHtml = '<img height=15 width=15 src="asset://e7876556a71025c1a63de5aa47553c43" />']
+	[h, if(action == "2"): actionHtml = '<img height=13 width=20 src="asset://6d8ac5fce8e04fc97996d921acea5499" />']
+	[h, if(action == "3"): actionHtml = '<img height=15 width=31 src="asset://ba42444f6e7189a4450a18edb9aea022" />']
+	[h, if(action == "R"): actionHtml = '<img height=18 width=18 src="asset://350ae7b3054be8a96f62ddf0f13de5ba" />']
+	[h, if(action == "F"): actionHtml = '<img height=15 width=15 src="asset://70ad3250dee31e0250014fb92ed1e159" />']
+	[h, if(action != "" && action != "1" && action != "2" && action != "3" && action != "R" && action != "F"): actionHtml = action]
+
 	[h: abilityName = replace(abilityName, "'", "&#39;")]
 	[h: trigger = replace(trigger, "'", "&#39;")]
 	[h: requirements = replace(requirements, "'", "&#39;")]
 	[h: action = replace(action, "'", "&#39;")]
 	[h: text = replace(text, "'", "&#39;")]
+	[h: tooltipTraits = replace(tooltipTraits, "'", "&#39;")]
 	[h: traitsList = json.toList(traits)]
 	[h: traitsList = replace(traitsList, "'", "")]
+
+	[h: macroTooltip = "<html><div style=" + decode("%22") + "width: 300px;" + decode("%22") + "><b>" + abilityName + "</b>  " + actionHtml]
+	[h, if(tooltipTraits != ""): macroTooltip = macroTooltip + " (" + tooltipTraits + ")"]
+	[h, if(trigger != ""): macroTooltip = macroTooltip + "<br><b>Trigger</b> " + trigger]
+	[h, if(requirements != ""): macroTooltip = macroTooltip + "<br><b>Requirements</b> " + requirements]
+	[h, if(text != ""): macroTooltip = macroTooltip + "<br>" + text]
+	[h: macroTooltip = macroTooltip + "</div></html>"]
 
 	[h: macroCommand = "[h:Name='" + abilityName + "']"]
 	[h: macroCommand = macroCommand + "[h:FeatLevel='" + featLevel + "']"]
@@ -59,11 +82,12 @@
 	[h: macroCommand = macroCommand + "[h:Action='" + action + "']"]
 	[h: macroCommand = macroCommand + "[h:Text='" + text + "']"]
 	[h: macroCommand = macroCommand + "[h:FeatData=json.set('{}','Name',Name,'FeatLevel',FeatLevel,'Traits',Traits,'Trigger',Trigger,'Requirements',Requirements,'Action',Action,'Text',Text)]"]
-	[h: macroCommand = macroCommand + "[macro('Feat@Lib:Pf2'):FeatData]"]
+	[h: macroCommand = macroCommand + "[h, macro('_Feat@Lib:AON'):FeatData]"]
+	[h: macroCommand = macroCommand + "[g,r: macro.return]"]
 
 	[h: existingIndexes = ""]
 	[h, token(tokenID): existingIndexes = getMacroIndexes(macroLabel)]
-	[h: macroProps = json.set("{}", "label", macroLabel, "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", macroGroup)]
+	[h: macroProps = json.set("{}", "label", macroLabel, "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", macroGroup, "tooltip", macroTooltip)]
 	[h, if(existingIndexes == ""): createMacro(macroProps, tokenID)]
 	[h, if(existingIndexes != ""), code: {
 		[h: existingIndex = listGet(existingIndexes, 0)]
