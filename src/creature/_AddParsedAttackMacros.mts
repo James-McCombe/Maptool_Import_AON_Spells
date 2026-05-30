@@ -93,7 +93,7 @@
 
 	[h: macroCommand = "[h:AttackName='" + displayAttackName + "']"]
 	[h: macroCommand = macroCommand + "[h:DamageTooltip='" + damage + "']"]
-	[h: macroCommand = macroCommand + "[h:DamageRoll=eval(DamageTooltip)]"]
+	[h: macroCommand = macroCommand + "[h:DamageRoll=0][h, if(DamageTooltip != ''): DamageRoll=eval(DamageTooltip)]"]
 	[h: macroCommand = macroCommand + "[h:AttackType='" + attackType + "']"]
 	[h: macroCommand = macroCommand + "[h:Traits='" + macroTraits + "']"]
 	[h: macroCommand = macroCommand + "[h:AttackModifier='" + attackModifier + "']"]
