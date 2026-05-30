@@ -28,4 +28,10 @@
 [h: macroCommand = macroCommand + decode("%0A") + "[h, macro('_AddParsedSpecialAbilities@Lib:AON'): abilityMacroArgs]"]
 [h: macroCommand = macroCommand + decode("%0A") + "[g,r: 'AON properties rebuilt.']"]
 [h: macroProps = json.set("{}", "label", "REBUILD_AON", "command", macroCommand, "autoExecute", 1, "playerEditable", 1, "group", "z_AON")]
-[h: createMacro(macroProps, tokenID)]
+[h: existingIndexes = ""]
+[h, token(tokenID): existingIndexes = getMacroIndexes("REBUILD_AON")]
+[h, if(existingIndexes == ""): createMacro(macroProps, tokenID)]
+[h, if(existingIndexes != ""), code: {
+	[h: existingIndex = listGet(existingIndexes, 0)]
+	[h, token(tokenID): setMacroProps(existingIndex, macroProps, "json")]
+}]
