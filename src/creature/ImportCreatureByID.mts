@@ -44,7 +44,6 @@
 [h: parsedAbilities = macro.return]
 [h, macro("_ParseCreatureInfo@Lib:AON"): creatureData]
 [h: parsedCreatureInfo = macro.return]
-[r: parsedCreatureInfo]
 
 [h: creatureName = creatureID]
 [h, if(json.contains(creatureData, "name")): creatureName = json.get(creatureData, "name")]
