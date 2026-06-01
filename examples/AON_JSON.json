@@ -1,0 +1,174 @@
+{
+  "Metadata": {
+    "SourceID": "creature-3046",
+    "AONID": "3046",
+    "Type": "Creature",
+    "Source": "AoN",
+    "URL": "https://2e.aonprd.com/Monsters.aspx?ID=3046",
+    "ImageURL": "https://2e.aonprd.com/Images/Monsters/Harpy.webp",
+    "ImporterVersion": "1.00",
+    "ImportDate": "2026-06-01 02:01:43",
+    "ManualReviewNeeded": 1
+  },
+  "Parsed": {
+    "AttackParserVersion": 1.0,
+    "AbilityParserVersion": 1.0,
+    "CreatureInfoParserVersion": 1.0,
+    "AttackParseSource": "markdown",
+    "AbilityParseSource": "creature_ability + markdown",
+    "CreatureInfoParseSource": "markdown",
+    "Attacks": [
+      {
+        "Index": 0,
+        "Type": "Melee",
+        "ActionText": "Single Action",
+        "Action": "1",
+        "AttackName": "jaws",
+        "AttackType": "Melee",
+        "AttackModifier": "15",
+        "AttackText": "jaws +15 (Finesse),",
+        "Traits": [
+          "melee",
+          "finesse"
+        ],
+        "DamageText": "2d8+4 piercing plus putrid plague",
+        "Damage": "2d8+4",
+        "DamageType": "piercing",
+        "Damage2": "",
+        "Damage2Type": "",
+        "Effect": "putrid plague",
+        "ApplyAttackKeyword": 1,
+        "RawBlock": "**Melee** <actions string=\"Single Action\" /> jaws +15 ([Finesse](/Traits.aspx?ID=179)), **Damage** 2d8+4 piercing plus putrid plague",
+        "AttackBonus": 15,
+        "AttackBonusScaleNumber": 4,
+        "StrikeDamageAverage": 11,
+        "StrikeDamageScaleNumber": 2
+      },
+      {
+        "Index": 1,
+        "Type": "Melee",
+        "ActionText": "Single Action",
+        "Action": "1",
+        "AttackName": "talon",
+        "AttackType": "Melee",
+        "AttackModifier": "15",
+        "AttackText": "talon +15 (Agile, Finesse),",
+        "Traits": [
+          "melee",
+          "agile",
+          "finesse"
+        ],
+        "DamageText": "2d6+4 slashing",
+        "Damage": "2d6+4",
+        "DamageType": "slashing",
+        "Damage2": "",
+        "Damage2Type": "",
+        "Effect": "",
+        "ApplyAttackKeyword": 1,
+        "RawBlock": "**Melee** <actions string=\"Single Action\" /> talon +15 ([Agile](/Traits.aspx?ID=170), [Finesse](/Traits.aspx?ID=179)), **Damage** 2d6+4 slashing",
+        "AttackBonus": 15,
+        "AttackBonusScaleNumber": 4,
+        "StrikeDamageAverage": 13,
+        "StrikeDamageScaleNumber": 3
+      }
+    ],
+    "Abilities": [
+      {
+        "Index": 0,
+        "Name": "Wind's Whispers",
+        "FeatLevel": 5,
+        "Traits": [
+          "air",
+          "primal"
+        ],
+        "Trigger": "",
+        "Requirements": "",
+        "Action": "",
+        "ActionText": "",
+        "Text": "When a harpy speaks, they can choose one creature within 90 feet. That creature can hear the harpy's words over any other sound, but no other creature hears the words at all.",
+        "TraitsText": "air, primal",
+        "DescriptionText": "When a harpy speaks, they can choose one creature within 90 feet. That creature can hear the harpy's words over any other sound, but no other creature hears the words at all.",
+        "RawBlock": "**Wind's Whispers** ([air](/Traits.aspx?ID=527), [primal](/Traits.aspx?ID=676)) When a harpy speaks, they can choose one creature within 90 feet. That creature can hear the harpy's words over any other sound, but no other creature hears the words at all."
+      },
+      {
+        "Index": 1,
+        "Name": "Stench",
+        "FeatLevel": 5,
+        "Traits": [
+          "aura",
+          "olfactory"
+        ],
+        "Trigger": "",
+        "Requirements": "",
+        "Action": "",
+        "ActionText": "",
+        "Text": "30 feet, DC 21",
+        "TraitsText": "aura, olfactory",
+        "DescriptionText": "30 feet, DC 21",
+        "RawBlock": "**[Stench](/MonsterAbilities.aspx?ID=76)** ([aura](/Traits.aspx?ID=542), [olfactory](/Traits.aspx?ID=664)) 30 feet, DC 21"
+      },
+      {
+        "Index": 2,
+        "Name": "Hungry Winds",
+        "FeatLevel": 5,
+        "Traits": [
+          "Air",
+          "Concentrate",
+          "Primal"
+        ],
+        "Trigger": "",
+        "Requirements": "",
+        "Action": "2",
+        "ActionText": "Two Actions",
+        "Text": "The harpy uses the wind to pull its prey closer. A target within 20 feet must succeed at a DC 21 Fortitude save or be pulled adjacent to the harpy, where they make a jaws Strike against the target. If the target was pulled off the ground and can't fly, it then falls as normal.",
+        "TraitsText": "Air, Concentrate, Primal",
+        "DescriptionText": "The harpy uses the wind to pull its prey closer. A target within 20 feet must succeed at a DC 21 Fortitude save or be pulled adjacent to the harpy, where they make a jaws Strike against the target. If the target was pulled off the ground and can't fly, it then falls as normal.",
+        "RawBlock": "**Hungry Winds** <actions string=\"Two Actions\" /> ([Air](/Traits.aspx?ID=5), [Concentrate](/Traits.aspx?ID=32), [Primal](/Traits.aspx?ID=134)) The harpy uses the wind to pull its prey closer. A target within 20 feet must succeed at a DC 21 Fortitude save or be [pulled](/Rules.aspx?ID=451) adjacent to the harpy, where they make a jaws Strike against the target. If the target was pulled off the ground and can't fly, it then [falls](/Rules.aspx?ID=402) as normal."
+      },
+      {
+        "Index": 3,
+        "Name": "Putrid Plague",
+        "FeatLevel": 5,
+        "Traits": [
+          "Disease"
+        ],
+        "Trigger": "",
+        "Requirements": "",
+        "Action": "",
+        "ActionText": "",
+        "Text": "The sickened and unconscious conditions from putrid plague can't end or be reduced until the disease is cured; **Saving Throw** DC 19 Fortitude; **Stage 1** carrier with no ill effect (1d4 hours), **Stage 2** sickened 1 (1 day), **Stage 3** sickened 1 and slowed 1 (1 day), **Stage 4** unconscious (1 day), **Stage 5** dead",
+        "TraitsText": "Disease",
+        "DescriptionText": "The sickened and unconscious conditions from putrid plague can't end or be reduced until the disease is cured; **Saving Throw** DC 19 Fortitude; **Stage 1** carrier with no ill effect (1d4 hours), **Stage 2** sickened 1 (1 day), **Stage 3** sickened 1 and slowed 1 (1 day), **Stage 4** unconscious (1 day), **Stage 5** dead",
+        "RawBlock": "**Putrid Plague**  ([Disease](/Traits.aspx?ID=46)) The [sickened](/Conditions.aspx?ID=91) and [unconscious](/Conditions.aspx?ID=95) conditions from putrid plague can't end or be reduced until the disease is cured; **Saving Throw** DC 19 Fortitude; **Stage 1** carrier with no ill effect (1d4 hours), **Stage 2** sickened 1 (1 day), **Stage 3** sickened 1 and [slowed 1](/Conditions.aspx?ID=92) (1 day), **Stage 4** unconscious (1 day), **Stage 5** dead"
+      }
+    ],
+    "CreatureInfo": {
+      "DescriptionText": "Harpies are amalgamations of human and bird, resembling feral humans with wings, talons, and sharp teeth. They use their ancestral control of the wind to lure prey or even directly pull in their next meal. They enjoy causing confusion and fear in their prey before they strike, believing it creates a savory flavor in the flesh. Harpies can eat most creatures but strongly prefer sapient prey— humans and elves in particular. Although harpies will eat goblins if sufficiently hungry, they dislike their flavor and avoid eating them if possible. This doesn't comfort goblins, of course, who have a particularly strong fear of harpies.<br /><br /> Because their aeries often reek with the gore of their kills and careless spatters of guano, harpies carry a distinctly vile scent that canny travelers associate with danger. Harpies who roost close to civilization make better efforts to keep clean, though these efforts have mixed results.<br /><br /> Somewhere among the filth, most aeries have a shrine dedicated to the demon lord Pazuzu. Harpy legends credit him with raising them up from simple air spirits to their current station, and their gratitude typically takes the shape of a sketched figure in a corner piled with offerings. More devout families build portable wooden shrines that are carried from aerie to aerie for generations. Harpies live in family groups or larger clans. Most adults stand 5 feet tall and weigh around 90 pounds. While some use relatively simple weapons, those who master the use of the bow are regarded as heroes among their kind.",
+      "RawMarkdown": "<title level=\"1\" pfs=\"Standard\">[Harpy](/Monsters.aspx?ID=3046)</title>\n\n<row gap=\"medium\">\n\n<column gap=\"medium\" flex=\"1 1 400px\">\n\nHarpies are amalgamations of human and bird, resembling feral humans with wings, talons, and sharp teeth. They use their ancestral control of the wind to lure prey or even directly pull in their next meal. They enjoy causing confusion and fear in their prey before they strike, believing it creates a savory flavor in the flesh. Harpies can eat most creatures but strongly prefer sapient prey— [humans](/Ancestries.aspx?ID=6) and [elves](/Ancestries.aspx?ID=2) in particular. Although harpies will eat [goblins](/Ancestries.aspx?ID=4) if sufficiently hungry, they dislike their flavor and avoid eating them if possible. This doesn't comfort goblins, of course, who have a particularly strong fear of harpies.\n\n Because their aeries often reek with the gore of their kills and careless spatters of guano, harpies carry a distinctly vile scent that canny travelers associate with danger. Harpies who roost close to civilization make better efforts to keep clean, though these efforts have mixed results.\n\n Somewhere among the filth, most aeries have a shrine dedicated to the demon lord [Pazuzu](/Deities.aspx?ID=79). Harpy legends credit him with raising them up from simple air spirits to their current station, and their gratitude typically takes the shape of a sketched figure in a corner piled with offerings. More devout families build portable wooden shrines that are carried from aerie to aerie for generations. Harpies live in family groups or larger clans. Most adults stand 5 feet tall and weigh around 90 pounds. While some use relatively simple weapons, those who master the use of the bow are regarded as heroes among their kind.\n\n",
+      "RecallKnowledge": [
+        {
+          "Name": "Recall Knowledge - Beast",
+          "Skills": "Arcana, Nature",
+          "DC": 20
+        },
+        {
+          "Name": "Recall Knowledge - Humanoid",
+          "Skills": "Society",
+          "DC": 20
+        },
+        {
+          "Name": "Unspecific Lore",
+          "Skills": "",
+          "DC": 18
+        },
+        {
+          "Name": "Specific Lore",
+          "Skills": "",
+          "DC": 15
+        }
+      ],
+      "ParserVersion": "1.00",
+      "ParseSource": "markdown"
+    }
+  }
+}

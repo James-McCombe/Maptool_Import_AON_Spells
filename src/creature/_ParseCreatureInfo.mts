@@ -8,6 +8,50 @@
 [h, if(rawMarkdown == "" && json.contains(creatureData, "description")): rawMarkdown = json.get(creatureData, "description")]
 [h: rawMarkdown = replace(rawMarkdown, decode("%0D"), "")]
 
+[h: recallStart = indexOf(rawMarkdown, "**[Recall Knowledge")]
+[h, if(recallStart >= 0), code: {
+	[h: recallRemainder = substring(rawMarkdown, recallStart)]
+	[h: recallEnd = indexOf(recallRemainder, "</column>")]
+	[h, if(recallEnd >= 0): recallBlock = substring(recallRemainder, 0, recallEnd)]
+	[h, if(recallEnd < 0): recallBlock = recallRemainder]
+
+	[h: recallBlock = replace(recallBlock, "\\]\\([^\\)]*\\)", "")]
+	[h: recallBlock = replace(recallBlock, "\\[", "")]
+	[h: recallBlock = replace(recallBlock, "\\]", "")]
+	[h: recallBlock = replace(recallBlock, "\\*\\*", "")]
+	[h: recallBlock = trim(recallBlock)]
+}]
+
+[h: recallKnowledge = "[]"]
+[h: recallLines = json.fromList(recallBlock, decode("%0A"))]
+[h: pendingName = ""]
+
+[h, foreach(line, recallLines), code: {
+	[h: line = trim(line)]
+	[h: hasDC = indexOf(line, "DC") >= 0]
+	[h: hasSkills = startsWith(line, "(")]
+	[h: isName = line != "" && !hasDC && !hasSkills]
+
+	[h, if(isName): pendingName = line]
+
+	[h, if(hasSkills), code: {
+		[h: skillEnd = indexOf(line, ")")]
+		[h: skills = substring(line, 1, skillEnd)]
+		[h: dc = trim(substring(line, indexOf(line, "DC") + 3))]
+		[h: entry = json.set("{}", "Name", pendingName, "Skills", skills, "DC", dc)]
+		[h: recallKnowledge = json.append(recallKnowledge, entry)]
+		[h: pendingName = ""]
+	}]
+
+	[h, if(hasDC && !hasSkills), code: {
+		[h: nameEnd = indexOf(line, ":")]
+		[h: name = trim(substring(line, 0, nameEnd))]
+		[h: dc = trim(substring(line, indexOf(line, "DC") + 3))]
+		[h: entry = json.set("{}", "Name", name, "Skills", "", "DC", dc)]
+		[h: recallKnowledge = json.append(recallKnowledge, entry)]
+	}]
+}]
+
 [h: creatureInfoRaw = rawMarkdown]
 [h: cutIndex = -1]
 [h: markerList = "## Elite,## [Elite],### Print Stat Block,# ["]
@@ -59,8 +103,12 @@
 [h: doubleBreak = decode("%0A") + decode("%0A")]
 [h: tripleBreak = doubleBreak + decode("%0A")]
 [h, while(indexOf(descriptionText, tripleBreak) >= 0): descriptionText = replace(descriptionText, tripleBreak, doubleBreak)]
+[h: descriptionText = replace(descriptionText, decode("%0A") + decode("%0A"), "<br /><br />")]
+[h: descriptionText = replace(descriptionText, decode("%0A"), "<br />")]
+[h, while(startsWith(descriptionText, "<br />")): descriptionText = substring(descriptionText, 6)]
+[h, while(endsWith(descriptionText, "<br />")): descriptionText = substring(descriptionText, 0, length(descriptionText)-6)]
 [h: descriptionText = trim(descriptionText)]
 
-[h: creatureInfo = json.set("{}", "DescriptionText", descriptionText, "RawMarkdown", creatureInfoRaw, "ParserVersion", "1.00", "ParseSource", "markdown")]
+[h: creatureInfo = json.set("{}", "DescriptionText", descriptionText, "RawMarkdown", creatureInfoRaw, "RecallKnowledge", recallKnowledge, "ParserVersion", "1.00", "ParseSource", "markdown")]
 
 [macro.return = creatureInfo]
