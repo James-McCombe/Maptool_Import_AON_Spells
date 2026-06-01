@@ -183,8 +183,10 @@ When modifying existing macros:
 
 ## Working Examples
 
-Before writing importer code, inspect:
+Current known-good AON_JSON output is saved in:
+/examples/AON_JSON.json
 
+Before writing importer code, inspect:
 /examples/existing-importer-working.mts
 
 Treat this as the source of truth for:
