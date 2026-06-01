@@ -1,25 +1,16 @@
-[h: buildRequest = ""]
-[h, if(isDefined("macro.args")): buildRequest = macro.args]
+[h: buildRequest = macro.args]
 [h: aonID = ""]
 
-[h: buildRequestText = "" + buildRequest]
-[h: buildRequestLooksObject = startsWith(trim(buildRequestText), "{")]
-[h, if(buildRequest != "" && buildRequestLooksObject == 1), code: {
-	[h: buildRequestType = json.type(buildRequest)]
-	[h, if(buildRequestType == "OBJECT" && json.contains(buildRequest, "BuildRequest")), code: {
-		[h: buildRequestValue = json.get(buildRequest, "BuildRequest")]
-		[h: buildRequestValueText = "" + buildRequestValue]
-		[h: buildRequestValueLooksObject = startsWith(trim(buildRequestValueText), "{")]
-		[h, if(buildRequestValueLooksObject == 1), code: {
-			[h: buildRequestValueType = json.type(buildRequestValue)]
-			[h, if(buildRequestValueType == "OBJECT" && json.contains(buildRequestValue, "AONID")): aonID = json.get(buildRequestValue, "AONID")]
-			[h, if(aonID == "" && buildRequestValueType == "OBJECT" && json.contains(buildRequestValue, "SourceID")): aonID = json.get(buildRequestValue, "SourceID")]
-		};{
-			[h: aonID = buildRequestValue]
-		}]
+[h, if(buildRequest != "" && json.type(buildRequest) == "OBJECT" && json.contains(buildRequest, "BuildRequest")), code: {
+	[h: buildRequestValue = json.get(buildRequest, "BuildRequest")]
+	[h, if(json.type(buildRequestValue) == "OBJECT"), code: {
+		[h, if(json.contains(buildRequestValue, "AONID")): aonID = json.get(buildRequestValue, "AONID")]
+		[h, if(aonID == "" && json.contains(buildRequestValue, "SourceID")): aonID = json.get(buildRequestValue, "SourceID")]
+	};{
+		[h: aonID = buildRequestValue]
 	}]
 }]
-[h, if(aonID == "" && buildRequest != "" && buildRequestLooksObject == 0): aonID = buildRequest]
+[h, if(aonID == "" && buildRequest != "" && json.type(buildRequest) != "OBJECT"): aonID = buildRequest]
 
 [h, if(aonID == ""), code: {
 	[h: status = input("aonID|3046|Enter AoN Creature ID|TEXT|WIDTH=60")]
@@ -53,6 +44,7 @@
 [h: parsedAbilities = macro.return]
 [h, macro("_ParseCreatureInfo@Lib:AON"): creatureData]
 [h: parsedCreatureInfo = macro.return]
+[r: parsedCreatureInfo]
 
 [h: creatureName = creatureID]
 [h, if(json.contains(creatureData, "name")): creatureName = json.get(creatureData, "name")]
