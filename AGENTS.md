@@ -56,6 +56,11 @@ Do not add:
 - “Here is the code”
 - trailing notes
 
+Exception:
+
+* `docs/tokem-image-importer-plan.md` may use normal markdown, prose, and non-MTScript roadmap content because it is a long-term design document for an external token image workflow.
+* This exception applies only to that one file and does not relax `.mts` file rules.
+
 Output only valid MTScript content for `.mts` files.
 
 ## Macro Import Safety
@@ -183,11 +188,69 @@ When modifying existing macros:
 
 ## Working Examples
 
-Current known-good AON_JSON output is saved in:
-/examples/AON_JSON.json
-
 Before writing importer code, inspect:
 /examples/existing-importer-working.mts
+
+## Golden Test Data
+
+### examples/AON_JSON_RAW.json
+
+Canonical raw AoN source data used as parser input.
+
+Contains:
+
+* Raw creature payload
+* Raw markdown
+* Raw fields returned from AoN
+* Parser source material
+
+### examples/AON_JSON.json
+
+Canonical expected parser output.
+
+Contains:
+
+* Metadata
+* Parsed creature information
+* Parsed Recall Knowledge
+* Parsed attacks
+* Parsed abilities
+* Any other parsed structures produced by the importer
+
+Whenever modifying any parser, including but not limited to:
+
+* _ParseCreatureInfo
+* _ParseCreatureAttacks
+* _ParseCreatureAbilities
+* Future spell parsers
+* Future creature parsers
+
+the developer must:
+
+1. Load examples/AON_JSON_RAW.json
+2. Execute the parser being modified
+3. Generate output JSON
+4. Compare output against examples/AON_JSON.json
+5. Verify that only intended changes occur
+
+Regression requirements:
+
+* Do not introduce parser changes without validating against the Golden Test Data.
+* Unexpected differences from examples/AON_JSON.json must be investigated before accepting a change.
+* If parser output intentionally changes, update examples/AON_JSON.json to reflect the new expected result.
+
+Project guidance:
+
+* The Harpy example is the primary baseline creature because it contains:
+  * Creature description text
+  * Recall Knowledge block
+  * Traits
+  * Statistics
+  * Melee attacks
+  * Ranged attacks
+  * Special abilities
+  * Disease effects
+* This makes it the preferred regression test creature for parser development.
 
 Treat this as the source of truth for:
 - REST.get
