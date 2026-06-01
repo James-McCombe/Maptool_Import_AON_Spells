@@ -66,12 +66,15 @@ At this stage:
 
 * the importer stores the AoN image URL
 * the importer creates the token normally
-* the token uses a safe fallback image
+* tokens with no generated image continue to use the default `baseNPCToken`
+* the token uses a safe fallback image when no generated art exists
 * the actual artwork workflow remains external
 
 This phase keeps the importer useful without blocking on image generation.
 
-### Phase 2: Queue Export
+### Phase 2: Image Request Handoff
+
+`src\creature\ImportCreatureByID.mts` should call the image request macro when it has enough data to start image processing.
 
 MapTool may later export a small queue entry for an external tool to consume.
 
@@ -84,9 +87,11 @@ The queue entry should contain only the minimum data needed to generate a token 
 
 This queue is a handoff format, not a token image format.
 
-### Phase 3: External Image Generation
+### Phase 3: External Image Processing
 
 PowerShell will process the queue and call ImageMagick to produce token images outside MapTool.
+
+Before any processing begins, PowerShell should check whether the final token image already exists. If `<AON-ID>.png` already exists, the pipeline should do nothing for that creature.
 
 That tool would be responsible for:
 
@@ -100,14 +105,18 @@ That tool would be responsible for:
 
 This is where image compositing belongs, not inside the macro importer or MapTool.
 
-### Phase 4: Rebuild Integration
+### Phase 4: Token Image Application
 
-Once a generated token image exists, rebuild workflows can look for it and reapply it during creature updates.
+Once a generated token image exists, a macro on the token itself can apply the finished image by filename when the user presses it.
+
+This phase also includes a separate image import macro that can run after the PowerShell and ImageMagick work completes.
+
+The token macro should apply the finished image without interrupting or delaying the existing queue-processing pipeline.
 
 This phase should stay optional and safe:
 
 * if no generated image exists, the token remains usable
-* if a generated image exists, rebuild can reuse it
+* if a generated image exists, the token macro can reuse it
 * rebuild should not re-download artwork inside MapTool
 
 ### Phase 5: Expansion Beyond Creatures
@@ -127,9 +136,13 @@ The intended long-term flow is:
 
 1. Import creature in MapTool.
 2. Store AoN metadata, including the image URL when available.
-3. Optionally export a queue entry for the external image tool.
-4. External tool downloads and composes the token image.
-5. MapTool rebuilds or updates the token when the generated image is available.
+3. If no image exists, keep the default `baseNPCToken` flow.
+4. `src\creature\ImportCreatureByID.mts` calls the image request macro.
+5. The request macro exports the queue metadata for the external image tool.
+6. PowerShell and ImageMagick download and compose the token image.
+7. A user presses the token image import macro on the token.
+8. The token macro applies the generated image by filename after the background work completes.
+9. MapTool can rebuild or update the token later if needed, using the generated image that is already available.
 
 ## Storage Guidance
 
@@ -142,6 +155,8 @@ The roadmap may reference a future working directory, cache directory, or export
 ImageMagick is the preferred image processor for the long-term image pipeline.
 
 The implementation path is PowerShell for queue orchestration and calling `magick`.
+
+PowerShell should verify the final output file does not already exist before starting processing. If the final file exists, the companion pipeline should skip the creature entirely.
 
 Python remains a possible future fallback if the ImageMagick path proves insufficient.
 
@@ -159,11 +174,12 @@ The first milestone is already partly complete:
 
 1. Import a Harpy creature. Done.
 2. Preserve the AoN image URL. Done.
-3. Export a queue entry for the companion tool. Pending.
-4. Generate a 256x256 token image externally. Pending.
-5. Confirm the generated image can be reused on rebuild. Pending.
+3. Request image processing from `src\creature\ImportCreatureByID.mts`. Pending.
+4. Process the queued image through PowerShell and ImageMagick. Pending.
+5. Apply the generated image through the token macro by filename. Pending.
+6. Confirm the generated image can be reused later when the token is updated. Pending.
 
-The remaining milestone work is the first real handoff point for the external image pipeline.
+The remaining milestone work is the first real handoff point for the external image pipeline and the token-side apply flow.
 
 The Harpy is the best baseline creature for this work because it exercises a broad set of parser and presentation features:
 
@@ -184,9 +200,9 @@ That makes Harpy the preferred regression example for token image roadmap work a
 
 Add support for the blue NPC frame and the gold Creature frame once the external generation path is stable.
 
-### M3: Automatic Reuse
+### M3: Token Image Reuse
 
-Automatically reuse generated token images during rebuild when they are present.
+Reuse generated token images when they are present, and apply them through the token macro when appropriate.
 
 ### M4: Broader Coverage
 
