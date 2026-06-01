@@ -38,6 +38,7 @@
 [h: descriptionText = creatureInfoRaw]
 [h: headingEnd = indexOf(descriptionText, decode("%0A"))]
 [h, if(startsWith(descriptionText, "# ") && headingEnd >= 0): descriptionText = substring(descriptionText, headingEnd + 1)]
+[h: descriptionText = replace(descriptionText, "<title[^>]*>[^<]*</title>", "")]
 [h: descriptionText = replace(descriptionText, "<title[^>]*>", "")]
 [h: descriptionText = replace(descriptionText, "</title>", "")]
 [h: descriptionText = replace(descriptionText, "<row[^>]*>", "")]
@@ -55,6 +56,9 @@
 [h: descriptionText = replace(descriptionText, "\\*\\*", "")]
 [h: descriptionText = replace(descriptionText, "__", "")]
 [h: descriptionText = replace(descriptionText, "\\r", "")]
+[h: doubleBreak = decode("%0A") + decode("%0A")]
+[h: tripleBreak = doubleBreak + decode("%0A")]
+[h, while(indexOf(descriptionText, tripleBreak) >= 0): descriptionText = replace(descriptionText, tripleBreak, doubleBreak)]
 [h: descriptionText = trim(descriptionText)]
 
 [h: creatureInfo = json.set("{}", "DescriptionText", descriptionText, "RawMarkdown", creatureInfoRaw, "ParserVersion", "1.00", "ParseSource", "markdown")]
