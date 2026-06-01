@@ -1,7 +1,6 @@
 # Creature Importer Plan
 
-## Phase 1
-
+## Phase 1 (Complete)
 Create token and store AoN JSON.
 
 Input:
@@ -87,3 +86,4 @@ Do not start this until Phase 1 works.
 Parse abilities.
 
 Do not start this until attack parsing is stable.
+
