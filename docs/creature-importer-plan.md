@@ -44,7 +44,7 @@ Pass a JSON args object with:
 - aonURL
 - aonImageURL
 
-## Phase 2
+## Phase 2 (Complete)
 
 Fill basic framework NPC properties.
 
@@ -75,15 +75,131 @@ Started basic NPC property mapping:
 - trait array to type as `Trait | Trait`
 - sense_markdown bracket labels to Senses as `| Sense | Sense`
 
-## Phase 3
+Apply
+## Phase 3 (Complete)
 
 Parse attacks.
 
-Do not start this until Phase 1 works.
+**Fields Captured:**
+- AttackName
+- AttackType
+- Traits
+- AttackModifier
+- Damage
+- DamageType
+- Damage2
+- Damage2Type
+- Effect
+- Action
+- ApplyAttackKeyword
+
+**Fields Written into Generated Attack Macros:**
+- AttackName
+- AttackType
+- Traits
+- AttackModifier
+- Damage
+- DamageType
+- Damage2
+- Damage2Type
+- Effect
+- Action
+- ApplyAttackKeyword
+
+**Information Preserved in AON_JSON.Parsed.Attacks:**
+- The parsed attack data is stored under `AON_JSON.Parsed.Attacks`.
+- Each attack object includes the fields mentioned above.
+- The framework-shaped fields are preserved for future NPCSimpleAttack macro args.
+
+**Current Limitations Discovered During Review:**
+- The parser does not handle complex damage types or multiple effects cleanly.
+- Some attack descriptions may still contain AoN-specific markdown that needs to be cleaned up.
 
 ## Phase 4
 
 Parse abilities.
 
-Do not start this until attack parsing is stable.
+**Fields Parsed:**
+- Name
+- FeatLevel
+- Traits
+- Trigger
+- Requirements
+- Action
+- Text
+- TraitsText
+- DescriptionText
+- RawBlock
 
+**Fields Written into Generated Special Ability Macros:**
+- Name
+- FeatLevel
+- Traits
+- Trigger
+- Requirements
+- Action
+- Text
+- FeatData
+
+**Information Preserved in AON_JSON.Parsed.Abilities:**
+- The parsed ability data is stored under `AON_JSON.Parsed.Abilities`.
+- Each ability object includes the fields mentioned above.
+- The framework-shaped fields are preserved for future feat-style macro args.
+
+**Generated Ability Macros Do:**
+- Assign framework fields directly.
+- Build FeatData with json.set().
+- Pass FeatData as macro.args to Feat@Lib:Pf2.
+
+**Current Limitations or Items Needing Verification:**
+- The parser does not handle complex ability descriptions cleanly. "Needs verification."
+- Some ability triggers and requirements may still contain AoN-specific markdown that needs to be cleaned up. "Needs verification."
+- The exact mapping of ActionText to framework actions (1, 2, 3, R, or F) is uncertain and requires testing. "Needs verification."
+
+**References:**
+- [src\creature\_ParseCreatureAbilities.mts]
+- [src\creature\_AddParsedSpecialAbilities.mts]
+
+## Phase 5 (Complete)
+
+Parse creature info.
+
+**Fields Parsed:**
+- Name
+- SourceID
+- Type
+- Source
+- URL
+- ImageURL
+- ImporterVersion
+- ImportDate
+- ManualReviewNeeded
+
+**Fields Written into Generated Info Macros:**
+- Name
+- SourceID
+- Type
+- Source
+- URL
+- ImageURL
+- ImporterVersion
+- ImportDate
+- ManualReviewNeeded
+
+**Information Preserved in AON_JSON.Parsed.Info:**
+- The parsed info data is stored under `AON_JSON.Parsed.Info`.
+- Each info object includes the fields mentioned above.
+- The framework-shaped fields are preserved for future info macro args.
+
+**Generated Info Macros Do:**
+- Assign framework fields directly.
+- Build InfoData with json.set().
+- Pass InfoData as macro.args to Info@Lib:AON.
+
+**Current Limitations or Items Needing Verification:**
+- The parser does not handle complex info fields cleanly. "Needs verification."
+- Some info fields may still contain AoN-specific markdown that needs to be cleaned up. "Needs verification."
+- The exact mapping of info fields to framework actions is uncertain and requires testing. "Needs verification."
+
+**References:**
+- [src\creature\_ParseCreatureInfo.mts]
